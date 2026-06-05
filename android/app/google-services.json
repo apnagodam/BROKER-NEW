@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "222874835292",
+    "project_id": "pradeep-3b609",
+    "storage_bucket": "pradeep-3b609.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222874835292:android:6d6d2fd24a2d420e610999",
+        "android_client_info": {
+          "package_name": "com.apnagodam.ag.lp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyxU5Nc0zkYLumIiecnu8P_maUibXleBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
