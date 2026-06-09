@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WithdrawalRequestPage extends ConsumerStatefulWidget {
-  const WithdrawalRequestPage({Key? key}) : super(key: key);
+  const WithdrawalRequestPage({super.key});
 
   @override
   _WithdrawalRequestPageState createState() => _WithdrawalRequestPageState();
@@ -75,7 +75,7 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
         ),
         centerTitle: true,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         actions: [
@@ -106,16 +106,16 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    Icon(  
                       Icons.info_outline,
                       color: Colors.blue.shade700,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
+                    Expanded(  
+                      child: Text(  
                         localizations.enterWithdrawalInfo,
-                        style: TextStyle(
+                        style: TextStyle( 
                           color: Colors.blue.shade900,
                           fontSize: 14,
                         ),
@@ -134,7 +134,7 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -143,7 +143,7 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    Text(   
                       localizations.withdrawalAmount,
                       style: TextStyle(
                         fontSize: 16,

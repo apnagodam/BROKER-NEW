@@ -283,7 +283,7 @@ class NotificationService {
     String androidChannelName = 'AG Broker Notifications';
 
     if (Platform.isAndroid) {
-      androidChannelId = 'broker_channel_${androidSound}';
+      androidChannelId = 'broker_channel_$androidSound';
       androidChannelName = 'AG Broker Notifications ($androidSound)';
 
       try {

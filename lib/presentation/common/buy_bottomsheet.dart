@@ -106,7 +106,7 @@ class _BuyBottomsheetState extends ConsumerState<BuyBottomsheet> {
               SizedBox(
                 width: double.infinity,
                 child: Text(
-                  "${localizations.product}",
+                  localizations.product,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -305,11 +305,11 @@ class _BuyBottomsheetState extends ConsumerState<BuyBottomsheet> {
                 ),
               ),
               Card(
+                color: Colors.grey.shade200,
                 child: Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(termsText ?? ''),
                 ),
-                color: Colors.grey.shade200,
               ),
               SizedBox(height: 20),
 

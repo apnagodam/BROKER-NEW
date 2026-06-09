@@ -34,6 +34,8 @@ import 'dart:async';
 // import 'package:ag_broker/core/utils/printer_helper.dart';
 
 class HomePage extends ConsumerStatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -391,57 +393,55 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
               ),
               Expanded(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(right: 10, top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text.rich(
-                                TextSpan(
-                                  text: "${data.commodityName}  ",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: localizations.tapToPunchOrder,
-
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(right: 10, top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text.rich(
+                              TextSpan(
+                                text: "${data.commodityName}  ",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                                children: [
+                                  TextSpan(
+                                    text: localizations.tapToPunchOrder,
+                
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        "${localizations.stackNo} ${data.stackNumber}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "${localizations.stackNo} ${data.stackNumber}",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
                       ),
-                      SizedBox(height: 10),
-                      Text.rich(TextSpan(text: "${data.warehouseName}")),
-                      SizedBox(height: 10),
-                      HtmlWidget('''
+                    ),
+                    SizedBox(height: 10),
+                    Text.rich(TextSpan(text: "${data.warehouseName}")),
+                    SizedBox(height: 10),
+                    HtmlWidget('''
   ${data.bidTime}
   '''),
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ],
@@ -743,7 +743,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   children: [
                     Expanded(
                       child: Text(
-                        localizations.bestBuyer + ": ${data.bestBuyer}",
+                        "${localizations.bestBuyer}: ${data.bestBuyer}",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -753,7 +753,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     ),
                     Expanded(
                       child: Text(
-                        localizations.bestSeller + ": ${data.bestSeller}",
+                        "${localizations.bestSeller}: ${data.bestSeller}",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -789,13 +789,13 @@ class _HomePageState extends ConsumerState<HomePage>
                         );
                       }
                     },
-                    child: Text(localizations.buy),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+                    child: Text(localizations.buy),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -821,13 +821,13 @@ class _HomePageState extends ConsumerState<HomePage>
                         );
                       }
                     },
-                    child: Text(localizations.sell),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade900,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+                    child: Text(localizations.sell),
                   ),
                 ),
               ],
@@ -992,7 +992,7 @@ class _HomePageState extends ConsumerState<HomePage>
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: constraints.maxWidth),
               child: DataTable(
-                headingRowColor: MaterialStateProperty.all(
+                headingRowColor: WidgetStateProperty.all(
                   Theme.of(context).primaryColor,
                 ),
                 border: TableBorder(
@@ -1055,7 +1055,7 @@ class _HomePageState extends ConsumerState<HomePage>
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
           ),
           child: Text(value),
         ),
@@ -1542,171 +1542,509 @@ class _HomePageState extends ConsumerState<HomePage>
       ],
     );
   }
+Widget _buildDrawer(
+  BuildContext context,
+  WidgetRef ref,
+  AppLocalizations localizations,
+) {
+  final userDetails = SharedPreferencesService.userDetails;
+  final phoneNumber = SharedPreferencesService.phoneNumber;
+  final power =
+      ref.watch(authStateProvider).userDetails?.userDetails?.power ?? '0.0';
+  final primary = Theme.of(context).primaryColor;
 
-  Widget _buildDrawer(
-    BuildContext context,
-    WidgetRef ref,
-    AppLocalizations localizations,
-  ) {
-    final userDetails = SharedPreferencesService.userDetails;
-    final phoneNumber = SharedPreferencesService.phoneNumber;
-    final power =
-        ref.watch(authStateProvider).userDetails?.userDetails?.power ?? '0.0';
+  final int memberType = int.tryParse(
+        ref
+                .watch(authStateProvider)
+                .userDetails
+                ?.userDetails
+                ?.memberType
+                ?.toString() ??
+            '1',
+      ) ??
+      1;
 
-    return Drawer(
-      child: Column(
-        children: [
-          // Profile Header
-          Container(
-            width: double.infinity,
-            child: DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      color: Theme.of(context).primaryColor,
-                      size: 40,
+  return Drawer(
+    child: Column(
+      children: [
+        // ── Profile Header ─────────────────────────────────────────────────
+        Container(
+          width: double.infinity,
+          color: primary,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 12,
+            left: 16,
+            right: 16,
+            bottom: 12,
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: Colors.white.withValues(alpha: 0.25),
+                child: Icon(Icons.person, color: Colors.white, size: 26),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      userDetails?.name ?? localizations.appTitle,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    userDetails?.name ?? localizations.appTitle,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: phoneNumber != null ? '+91 $phoneNumber' : '',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                      children: [
-                        TextSpan(
-                          text: power != null
-                              ? '\n Power(${StringConstants.rupeeSymbol}) $power'
-                              : '0.0',
+                    if (phoneNumber != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        '+91 $phoneNumber',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.85),
                         ),
-                      ],
+                      ),
+                    ],
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'Power ${StringConstants.rupeeSymbol} $power',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // ── Menu Items ─────────────────────────────────────────────────────
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.only(top: 6, bottom: 8),
+            children: [
+
+              // ── Dashboard / Home ──────────────────────────────────────────
+              _drawerTile(
+                context,
+                icon: Icons.dashboard_outlined,
+                label: 'Dashboard',
+                iconColor: primary,
+                onTap: () => Navigator.of(context).pop(),
+              ),
+
+              const SizedBox(height: 2),
+
+              // ── PROFILE ───────────────────────────────────────────────────
+              _drawerExpandable(
+                context,
+                icon: Icons.person_outline,
+                label: 'Profile',
+                iconColor: primary,
+                children: [
+                  _drawerSubTile(
+                    context,
+                    label: localizations.profile,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/profile');
+                    },
+                  ),
+                  _drawerSubTile(
+                    context,
+                    label: localizations.brokerageProfile,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/brokerage-profile');
+                    },
                   ),
                 ],
               ),
-            ),
-          ),
 
-          // Menu Items
-          ListTile(
-            leading: Icon(Icons.home, color: Theme.of(context).primaryColor),
-            title: Text(localizations.home),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-            },
-          ),
+              // ── HISTORY ───────────────────────────────────────────────────
+              _drawerTile(
+                context,
+                icon: Icons.history_outlined,
+                label: localizations.bidsHistory,
+                iconColor: Colors.indigo.shade700,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.go('/home/bids-history');
+                },
+              ),
 
-          ListTile(
-            leading: Icon(
-              Icons.account_circle,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Text(localizations.profile),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              context.go('/home/profile');
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.account_circle,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Text(localizations.brokerageProfile),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              context.go('/home/brokerage-profile');
-            },
-          ),
+              const SizedBox(height: 2),
 
-          ListTile(
-            leading: Icon(Icons.history, color: Theme.of(context).primaryColor),
-            title: Text(localizations.bidsHistory),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              context.go('/home/bids-history');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.people, color: Theme.of(context).primaryColor),
-            title: Text(localizations.lpClientList),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              context.go('/home/lp-clients');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.history, color: Theme.of(context).primaryColor),
-            title: Text(localizations.walletStatement),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              context.go('/home/wallet-statement');
-            },
-          ),
+              // ── MEMBERS ───────────────────────────────────────────────────
+              _drawerExpandable(
+                context,
+                icon: Icons.people_outline,
+                label: 'Members',
+                iconColor: primary,
+                children: [
+                  // Client List — all roles
+                  _drawerSubTile(
+                    context,
+                    label: localizations.lpClientList,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/lp-clients');
+                    },
+                  ),
 
-          ListTile(
-            leading: Icon(
-              Icons.account_balance_wallet,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Text(localizations.withdrawalRequest),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              context.go('/home/withdrawal-request');
-            },
+                  // Authorised Person — TM (2) and STCM (3)
+                  if (memberType == 2 || memberType == 3)
+                    _drawerSubTile(
+                      context,
+                      label: 'Authorised Person',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/authorised-person');
+                      },
+                    ),
+
+                  // Trading Member — STCM (3) only
+                  if (memberType == 3)
+                    _drawerSubTile(
+                      context,
+                      label: 'Trading Member',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/trading-member');
+                      },
+                    ),
+
+                  // Add Security — TM (2) only
+                  if (memberType == 2)
+                    _drawerSubTile(
+                      context,
+                      label: 'Add Security',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/add-security');
+                      },
+                    ),
+
+                  // TM Fees — TM (2) only
+                  if (memberType == 2)
+                    _drawerSubTile(
+                      context,
+                      label: 'TM Fees',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/tm-fees');
+                      },
+                    ),
+                ],
+              ),
+
+              // ── MARGIN FUNDING — STCM (3) only ───────────────────────────
+              if (memberType == 3)
+                _drawerExpandable(
+                  context,
+                  icon: Icons.percent_outlined,
+                  label: 'Margin Funding',
+                  iconColor: Colors.green.shade700,
+                  children: [
+                    _drawerSubTile(
+                      context,
+                      label: 'Schemes',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/margin-funding-schemes');
+                      },
+                    ),
+                    _drawerSubTile(
+                      context,
+                      label: 'Margin Funding Limit',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/margin-funding-limit');
+                      },
+                    ),
+                    _drawerSubTile(
+                      context,
+                      label: 'Margin Funding Request',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/margin-funding-request');
+                      },
+                    ),
+                  ],
+                ),
+
+              // ── WALLET ────────────────────────────────────────────────────
+              _drawerExpandable(
+                context,
+                icon: Icons.account_balance_wallet_outlined,
+                label: 'Wallet',
+                iconColor: Colors.orange.shade800,
+                children: [
+                  // Brokerage Wallet Statement — all roles
+                  _drawerSubTile(
+                    context,
+                    label: localizations.walletStatement,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/wallet-statement');
+                    },
+                  ),
+
+                  // Trade Power Statement — TM (2) and STCM (3) only
+                  if (memberType == 2 || memberType == 3)
+                    _drawerSubTile(
+                      context,
+                      label: 'Trade Power Statement',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go('/home/trade-power-statement');
+                      },
+                    ),
+
+                  // Withdrawal Request — all roles
+                  _drawerSubTile(
+                    context,
+                    label: localizations.withdrawalRequest,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/withdrawal-request');
+                    },
+                  ),
+                ],
+              ),
+
+              // ── SBT PRODUCTS (all roles) ──────────────────────────────────
+              _drawerExpandable(
+                context,
+                icon: Icons.verified_outlined,
+                label: 'SBT Product',
+                iconColor: Colors.green.shade800,
+                children: [
+                  _drawerSubTile(
+                    context,
+                    label: 'SBT Secure Product',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/sbt-secure-product');
+                    },
+                  ),
+                  _drawerSubTile(
+                    context,
+                    label: 'SBT Unsecure Product',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.go('/home/sbt-unsecure-product');
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 2),
+
+              // ── SETTINGS ──────────────────────────────────────────────────
+              _drawerTile(
+                context,
+                icon: Icons.language_outlined,
+                label: localizations.changeLanguage,
+                iconColor: Colors.blueGrey.shade700,
+                subtitle: ref.watch(localeProvider).languageCode == 'en'
+                    ? localizations.english
+                    : localizations.hindi,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _showLanguageDialog(context, ref, localizations);
+                },
+              ),
+            ],
           ),
+        ),
 
-          ListTile(
-            leading: Icon(
-              Icons.language,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Text(localizations.changeLanguage),
-            subtitle: Text(
-              ref.watch(localeProvider).languageCode == 'en'
-                  ? localizations.english
-                  : localizations.hindi,
-            ),
-            onTap: () {
-              Navigator.of(context).pop(); // Close drawer
-              _showLanguageDialog(context, ref, localizations);
-            },
+        // ── Logout ────────────────────────────────────────────────────────
+        Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.grey.shade200)),
           ),
-
-          Spacer(),
-
-          // Logout Button
-          Padding(
-            padding: EdgeInsetsGeometry.symmetric(
-              vertical: MediaQuery.of(context).padding.bottom,
-            ),
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom),
             child: ListTile(
-              leading: Icon(Icons.logout, color: Colors.red),
+              dense: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+              leading: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.logout,
+                    color: Colors.red.shade700, size: 20),
+              ),
               title: Text(
                 localizations.logout,
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.red.shade700,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
               onTap: () async {
-                Navigator.of(context).pop(); // Close drawer
+                Navigator.of(context).pop();
                 await ref.read(authStateProvider.notifier).logout();
                 context.go('/login');
               },
             ),
           ),
+        ),
+      ],
+    ),
+  );
+}
+
+// ── Helper: expandable group tile ────────────────────────────────────────────
+Widget _drawerExpandable(
+  BuildContext context, {
+  required IconData icon,
+  required String label,
+  required Color iconColor,
+  required List<Widget> children,
+}) {
+  return Theme(
+    // Remove the default ExpansionTile dividers
+    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+    child: ExpansionTile(
+      tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      childrenPadding: EdgeInsets.zero,
+      dense: true,
+      leading: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: iconColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: iconColor, size: 20),
+      ),
+      title: Text(
+        label,
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+      ),
+      iconColor: Colors.grey.shade600,
+      collapsedIconColor: Colors.grey.shade400,
+      children: children,
+    ),
+  );
+}
+
+// ── Helper: sub-tile inside an expandable ────────────────────────────────────
+Widget _drawerSubTile(
+  BuildContext context, {
+  required String label,
+  required VoidCallback onTap,
+}) {
+  final primary = Theme.of(context).primaryColor;
+  return InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.only(left: 64, right: 16, top: 10, bottom: 10),
+      child: Row(
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: primary.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey.shade800,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
         ],
       ),
+    ),
+  );
+}
+  // ── Helper: group label ───────────────────────────────────────────────────
+  Widget _drawerGroupLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, top: 8, bottom: 2, right: 16),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey.shade500,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Divider(height: 1, color: Colors.grey.shade300)),
+        ],
+      ),
+    );
+  }
+
+  // ── Helper: tile ──────────────────────────────────────────────────────────
+  Widget _drawerTile(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color iconColor,
+    required VoidCallback onTap,
+    String? subtitle,
+  }) {
+    return ListTile(
+      dense: true,
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      leading: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: iconColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: iconColor, size: 20),
+      ),
+      title: Text(
+        label,
+        style:
+            const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+      ),
+      subtitle: subtitle != null
+          ? Text(subtitle,
+              style: TextStyle(
+                  fontSize: 11, color: Colors.grey.shade600))
+          : null,
+      trailing: Icon(Icons.chevron_right,
+          color: Colors.grey.shade400, size: 18),
+      onTap: onTap,
     );
   }
 

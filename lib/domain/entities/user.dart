@@ -56,6 +56,8 @@ class UserDetails {
   final dynamic createdAt;
   final dynamic updatedAt;
   final dynamic power;
+  dynamic memberType;
+
 
   UserDetails({
     required this.id,
@@ -101,6 +103,7 @@ class UserDetails {
     required this.createdAt,
     required this.updatedAt,
     this.power,
+    this.memberType
   });
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
@@ -152,6 +155,8 @@ class UserDetails {
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
       power: json['power'],
+      memberType: json["member_type"],
+
     );
   }
 
@@ -200,6 +205,10 @@ class UserDetails {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'power': power,
+      "member_type": memberType,
+
+      
+
     };
   }
 }

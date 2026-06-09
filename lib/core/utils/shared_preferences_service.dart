@@ -30,6 +30,8 @@ class SharedPreferencesService {
     return null;
   }
 
+
+
   static set completeLoginResponse(LoginResponse? value) => value != null
       ? _prefs?.setString(
           _completeLoginResponseKey,
@@ -46,6 +48,12 @@ class SharedPreferencesService {
   static int? get active => completeLoginResponse?.active;
   static int? get status => completeLoginResponse?.status;
   static String? get message => completeLoginResponse?.message;
+    // Add this alongside the other convenience getters
+static int get memberType =>
+    int.tryParse(
+      completeLoginResponse?.userDetails.memberType?.toString() ?? '1',
+    ) ??
+    1;
 
   // Clear all auth data
   static Future<void> clearAuthData() async {

@@ -11,13 +11,13 @@ class ErrorLayout extends StatelessWidget {
   final String? retryButtonText;
 
   const ErrorLayout({
-    Key? key,
+    super.key,
     this.title,
     required this.message,
     this.onRetry,
     this.icon,
     this.retryButtonText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class ErrorLayout extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -88,8 +88,7 @@ class CompactErrorWidget extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
 
-  const CompactErrorWidget({Key? key, required this.message, this.onRetry})
-    : super(key: key);
+  const CompactErrorWidget({super.key, required this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +97,9 @@ class CompactErrorWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.errorContainer.withOpacity(0.1),
+        color: theme.colorScheme.errorContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.error.withOpacity(0.3)),
+        border: Border.all(color: theme.colorScheme.error.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -139,13 +138,13 @@ class ErrorDialog extends StatelessWidget {
   final String? retryButtonText;
 
   const ErrorDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.onRetry,
     this.closeButtonText,
     this.retryButtonText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +197,7 @@ class ErrorDialog extends StatelessWidget {
 class NetworkErrorLayout extends StatelessWidget {
   final VoidCallback? onRetry;
 
-  const NetworkErrorLayout({Key? key, this.onRetry}) : super(key: key);
+  const NetworkErrorLayout({super.key, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +215,7 @@ class NetworkErrorLayout extends StatelessWidget {
 class ServerErrorLayout extends StatelessWidget {
   final VoidCallback? onRetry;
 
-  const ServerErrorLayout({Key? key, this.onRetry}) : super(key: key);
+  const ServerErrorLayout({super.key, this.onRetry});
 
   @override
   Widget build(BuildContext context) {

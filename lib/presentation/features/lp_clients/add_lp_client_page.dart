@@ -170,7 +170,7 @@ class _AddLpClientPageState extends ConsumerState<AddLpClientPage> {
         ),
         centerTitle: true,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -185,7 +185,7 @@ class _AddLpClientPageState extends ConsumerState<AddLpClientPage> {
                   children: [
                     // Constitution Field
                     DropdownButtonFormField<ConstitutionType>(
-                      value: _selectedConstitution,
+                      initialValue: _selectedConstitution,
                       decoration: InputDecoration(
                         labelText: '${localizations.constitution} *',
                         border: OutlineInputBorder(

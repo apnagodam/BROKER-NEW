@@ -556,7 +556,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bidEditedSuccessfully => 'Bid edited successfully';
 
   @override
-  String get walletStatement => 'Wallet Statement';
+  String get walletStatement => 'Brokerage Wallet Statement';
 
   @override
   String get openingBalance => 'Opening Balance';

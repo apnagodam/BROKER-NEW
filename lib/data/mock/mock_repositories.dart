@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ag_broker/domain/entities/deals_model.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:ag_broker/domain/entities/stack_sell_list_model.dart';
 import 'package:ag_broker/domain/entities/client_list_model.dart';

@@ -1145,7 +1145,7 @@ abstract class AppLocalizations {
   /// No description provided for @walletStatement.
   ///
   /// In en, this message translates to:
-  /// **'Wallet Statement'**
+  /// **'Brokerage Wallet Statement'**
   String get walletStatement;
 
   /// No description provided for @openingBalance.

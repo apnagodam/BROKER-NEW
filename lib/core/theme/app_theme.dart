@@ -6,7 +6,7 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     primaryColor: primaryGreen,
     colorScheme: ColorScheme.fromSwatch(
-      primarySwatch: MaterialColor(primaryGreen.value, {
+      primarySwatch: MaterialColor(primaryGreen.toARGB32(), {
         50: primaryGreen.withValues(alpha: 0.1),
         100: primaryGreen.withValues(alpha: 0.2),
         200: primaryGreen.withValues(alpha: 0.3),

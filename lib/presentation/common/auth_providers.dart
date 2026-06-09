@@ -161,7 +161,7 @@ class AuthNotifier extends Notifier<AuthState> {
     return state.response ?? {};
   }
 
-  Future<void> getUserDetails() async {
+  Future<void> getUserDetails() async {  
     state = state.copyWith(isUserDetailsLoading: true, error: null);
     try {
       UserDetailsModel userDetails = await repository.getUserDetails();

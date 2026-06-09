@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class WithdrawalListPage extends ConsumerStatefulWidget {
-  const WithdrawalListPage({Key? key}) : super(key: key);
+  const WithdrawalListPage({super.key});
 
   @override
   _WithdrawalListPageState createState() => _WithdrawalListPageState();
@@ -38,7 +38,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
         ),
         centerTitle: true,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -146,7 +146,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.08),
+      shadowColor: Colors.black.withValues(alpha: 0.08),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {

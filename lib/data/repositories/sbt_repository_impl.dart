@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:ag_broker/core/utils/constants.dart';
 import 'package:ag_broker/core/utils/dio_client.dart';
@@ -34,7 +33,7 @@ class SbtRepositoryImpl implements SbtRepository {
     String price,
     String userId,
   ) async {
-    try {
+    try { 
       final response = await _dioClient.dio.post(
         Constants.saveTrade,
         queryParameters: {
@@ -132,6 +131,7 @@ class SbtRepositoryImpl implements SbtRepository {
       var response = await _dioClient.dio.post(
         Constants.getTradeList,
         queryParameters: {"product_id": productId},
+
       );
       return TradeListModel.fromJson(response.data);
     } catch (e) {

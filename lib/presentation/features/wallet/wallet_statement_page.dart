@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class WalletStatementPage extends ConsumerStatefulWidget {
-  const WalletStatementPage({Key? key}) : super(key: key);
+  const WalletStatementPage({super.key});
 
   @override
   _WalletStatementPageState createState() => _WalletStatementPageState();
@@ -57,7 +57,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
         ),
         centerTitle: true,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -149,7 +149,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
   }
 
   Widget _buildDateSelector(BuildContext context) {
-    return Container(
+    return Container(   
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -157,7 +157,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -310,7 +310,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
+              color: Colors.orange.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -366,7 +366,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withOpacity(0.8),
+            Theme.of(context).primaryColor.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -374,7 +374,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).primaryColor.withOpacity(0.3),
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -393,7 +393,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
               Container(
                 width: 1,
                 height: 60,
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
               ),
               _buildBalanceCard(
                 localizations.closingBalance,
@@ -416,7 +416,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     return GradientInfoCard(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       gradientColors: [Colors.orange.shade700, Colors.orange.shade600],
-      shadowColor: Colors.orange.withOpacity(0.3),
+      shadowColor: Colors.orange.withValues(alpha: 0.3),
       icon: Icons.flash_on,
       label: 'Power',
       value: _formatAmount(power.toString()),
@@ -427,12 +427,12 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: Colors.white.withOpacity(0.9), size: 32),
+          Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 32),
           const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -503,7 +503,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.08),
+      shadowColor: Colors.black.withValues(alpha: 0.08),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
@@ -733,7 +733,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        Text( 
           label,
           style: TextStyle(
             fontSize: 13,

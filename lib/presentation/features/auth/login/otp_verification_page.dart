@@ -8,8 +8,7 @@ import 'package:pinput/pinput.dart';
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
 
-  const OtpVerificationPage({Key? key, required this.phoneNumber})
-    : super(key: key);
+  const OtpVerificationPage({super.key, required this.phoneNumber});
 
   @override
   _OtpVerificationPageState createState() => _OtpVerificationPageState();

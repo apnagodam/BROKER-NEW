@@ -472,6 +472,13 @@ class _TruckLoadDetailsScreenState
                                         Container(
                                           width: double.infinity,
                                           padding: EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              bottomRight: Radius.circular(6),
+                                              bottomLeft: Radius.circular(6),
+                                            ),
+                                            color: Colors.amber.shade900,
+                                          ),
                                           child: Text(
                                             localizations.myBid,
                                             style: TextStyle(
@@ -480,19 +487,12 @@ class _TruckLoadDetailsScreenState
                                               fontSize: 18,
                                             ),
                                           ),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              bottomRight: Radius.circular(6),
-                                              bottomLeft: Radius.circular(6),
-                                            ),
-                                            color: Colors.amber.shade900,
-                                          ),
                                         ),
                                     ],
                                   ),
                                 );
                               })
-                              .toList(),
+                              ,
                         ],
                       ),
                     ),
@@ -639,7 +639,7 @@ class _TruckLoadDetailsScreenState
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               );
-                            }).toList(),
+                            }),
                           ],
                           onChanged: (client.Datum? newValue) {
                             ref

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class LpClientListPage extends ConsumerStatefulWidget {
-  const LpClientListPage({Key? key}) : super(key: key);
+  const LpClientListPage({super.key});
 
   @override
   _LpClientListPageState createState() => _LpClientListPageState();
@@ -42,7 +42,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
         ),
         centerTitle: true,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         actions: [
@@ -156,7 +156,6 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // TODO: Navigate to client details
         },
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -172,7 +171,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.1),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -184,7 +183,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                   const SizedBox(width: 12),
                   // Name and Constitution
                   Expanded(
-                    child: Column(
+                    child: Column( 
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(

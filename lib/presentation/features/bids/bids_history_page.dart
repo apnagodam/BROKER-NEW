@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class BidsHistoryPage extends ConsumerStatefulWidget {
+  const BidsHistoryPage({super.key});
+
   @override
   _BidsHistoryPageState createState() => _BidsHistoryPageState();
 }
@@ -53,7 +55,7 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
         ),
         centerTitle: true,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         bottom: PreferredSize(
@@ -63,7 +65,7 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 4,
                   offset: Offset(0, 2),
                 ),
@@ -186,13 +188,13 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
         border: Border.all(color: Colors.grey.shade200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 3,
             offset: Offset(0, 1),
             spreadRadius: 0,
@@ -238,7 +240,7 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
                                   (isBuy
                                           ? Colors.blue.shade200
                                           : Colors.orange.shade200)
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                               blurRadius: 4,
                               offset: Offset(0, 2),
                             ),
@@ -300,7 +302,7 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
                             (isComplete
                                     ? Colors.green.shade300
                                     : Colors.orange.shade300)
-                                .withOpacity(0.4),
+                                .withValues(alpha: 0.4),
                         blurRadius: 4,
                         offset: Offset(0, 2),
                       ),
@@ -554,4 +556,5 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
       return dateString;
     }
   }
+  
 }

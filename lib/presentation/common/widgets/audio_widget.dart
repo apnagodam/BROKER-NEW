@@ -24,21 +24,28 @@ class _AudioWidgetState extends ConsumerState<AudioWidget>
   String chatGptResponse = '';
   bool _isLoadingResponse = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this);
-    _expandController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    _expandAnimation = CurvedAnimation(
-      parent: _expandController,
-      curve: Curves.easeInOut,
-    );
-    speechController = ManualSttController(context);
-    _chatGptService = ChatGptService();
-  }
+@override
+void initState() {
+  super.initState();
+
+  _controller = AnimationController(vsync: this);
+
+  _expandController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 400),
+  );
+
+  _expandAnimation = CurvedAnimation(
+    parent: _expandController,
+    curve: Curves.easeInOut,
+  );
+
+  speechController = ManualSttController(context);
+
+  _chatGptService = ChatGptService(
+    'YOUR_OPENAI_API_KEY',
+  );
+}
 
   @override
   void dispose() {
@@ -171,7 +178,7 @@ class _AudioWidgetState extends ConsumerState<AudioWidget>
                               ),
                               child: Card(
                                 elevation: isTablet ? 12 : 8,
-                                shadowColor: Colors.green.withOpacity(0.3),
+                                shadowColor: Colors.green.withValues(alpha: 0.3),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                     isSmallScreen ? 12 : 16,
@@ -476,7 +483,7 @@ class _AudioWidgetState extends ConsumerState<AudioWidget>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.green.withOpacity(0.4),
+                  color: Colors.green.withValues(alpha: 0.4),
                   blurRadius: isSmallScreen ? 16 : 20,
                   spreadRadius: 2,
                 ),
@@ -514,7 +521,8 @@ class _AudioWidgetState extends ConsumerState<AudioWidget>
             },
             onSoundLevelChanged: (double level) {},
           );
-        } else {
+        } 
+        else { 
           setState(() {
             _isAnimating = false;
           });
@@ -549,8 +557,8 @@ class _AudioWidgetState extends ConsumerState<AudioWidget>
             boxShadow: [
               BoxShadow(
                 color: _isAnimating
-                    ? Colors.red.withOpacity(0.3)
-                    : Colors.green.withOpacity(0.3),
+                    ? Colors.red.withValues(alpha: 0.3)
+                    : Colors.green.withValues(alpha: 0.3),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),

@@ -556,7 +556,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get bidEditedSuccessfully => 'बोली सफलतापूर्वक संपादित की गई';
 
   @override
-  String get walletStatement => 'वॉलेट स्टेटमेंट';
+  String get walletStatement => 'ब्रोकरेज वॉलेट विवरण';
 
   @override
   String get openingBalance => 'प्रारंभिक शेष';

@@ -1,17 +1,29 @@
 import 'package:ag_broker/core/utils/navigation_service.dart';
 import 'package:ag_broker/core/utils/shared_preferences_service.dart';
+import 'package:ag_broker/presentation/features/Tm_fees_page.dart';
+import 'package:ag_broker/presentation/features/add_security_page.dart';
+import 'package:ag_broker/presentation/features/members/authorized_person_page.dart';
+import 'package:ag_broker/presentation/features/members/member_hub_page.dart';
+import 'package:ag_broker/presentation/features/profile/brokerage_profile.dart';
+import 'package:ag_broker/presentation/features/wallet/trade_power_statement.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ag_broker/presentation/features/auth/login/login_page.dart';
-import 'package:ag_broker/presentation/features/auth/otp_verification_page.dart';
+import 'package:ag_broker/presentation/features/auth/login/otp_verification_page.dart';
 import 'package:ag_broker/presentation/features/home/home_page.dart';
 import 'package:ag_broker/presentation/features/profile/profile_page.dart';
 import 'package:ag_broker/presentation/features/truck_load/truck_load_details_screen.dart';
 import 'package:ag_broker/presentation/features/lp_clients/lp_client_list_page.dart';
 import 'package:ag_broker/presentation/features/lp_clients/add_lp_client_page.dart';
+import 'package:ag_broker/presentation/features/bids/bids_history_page.dart';
+import 'package:ag_broker/presentation/features/wallet/wallet_hub_page.dart';
+import 'package:ag_broker/presentation/features/wallet/wallet_statement_page.dart';
+import 'package:ag_broker/presentation/features/wallet/withdrawal_request_page.dart';
+
+// ── Helper to resolve memberType from SharedPreferences ──────────────────────
+int _getMemberType() => SharedPreferencesService.memberType;
 
 /// Provides GoRouter instance for app navigation
-/// This is a keepAlive provider as routing should persist throughout app lifecycle
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: NavigationService.navigatorKey,
@@ -40,15 +52,67 @@ final routerProvider = Provider<GoRouter>((ref) {
           return TruckLoadDetailsScreen(index: stackData);
         },
       ),
+
+      // ── Profile ────────────────────────────────────────────────────────────
+      GoRoute(
+        path: '/home/profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: '/home/brokerage-profile',
+        builder: (context, state) => const BrokerageProfile(),
+      ),
+      GoRoute(
+        path: '/home/bids-history',
+        builder: (context, state) => BidsHistoryPage(),
+      ),
+
+      // ── LP Clients ─────────────────────────────────────────────────────────
       GoRoute(
         path: '/home/lp-clients',
         builder: (context, state) => const LpClientListPage(),
         routes: [
           GoRoute(
-            path: '/home/lp-clients/add',
+            path: 'add',
             builder: (context, state) => const AddLpClientPage(),
           ),
         ],
+      ),
+
+      // ── Wallet hub + sub-screens ───────────────────────────────────────────
+      GoRoute(
+        path: '/home/wallet',
+        builder: (context, state) => WalletHubPage(memberType: _getMemberType()),
+      ),
+      GoRoute(
+        path: '/home/wallet-statement',
+        builder: (context, state) => const WalletStatementPage(),
+      ),
+      GoRoute(
+        path: '/home/withdrawal-request',
+        builder: (context, state) => const WithdrawalRequestPage(),
+      ),
+      GoRoute(
+        path: '/home/trade-power-statement',
+        builder: (context, state) => const TradePowerStatementPage(),
+      ),
+
+      // ── Members hub + sub-screens ──────────────────────────────────────────
+      GoRoute(
+        path: '/home/members',
+        builder: (context, state) => MembersHubPage(memberType: _getMemberType()),
+      ),
+      GoRoute(
+        path: '/home/authorised-person',
+        builder: (context, state) => const AuthorisedPersonPage(),
+      ),
+      GoRoute(
+        path: '/home/tm-fees',
+        builder: (context, state) => const TmFeesPage(),
+      ),
+      GoRoute(
+        path: '/home/add-security',
+        builder: (context, state) => const AddSecurityPage(),
       ),
     ],
     redirect: (context, state) {
@@ -56,15 +120,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoginRoute =
           state.uri.path == '/login' || state.uri.path == '/otp-verification';
 
-      // Redirect to home if logged in and trying to access login
-      if (isLoggedIn && isLoginRoute) {
-        return '/home';
-      }
-
-      // Redirect to login if not logged in and trying to access protected routes
-      if (!isLoggedIn && !isLoginRoute) {
-        return '/login';
-      }
+      if (isLoggedIn && isLoginRoute) return '/home';
+      if (!isLoggedIn && !isLoginRoute) return '/login';
 
       return null;
     },

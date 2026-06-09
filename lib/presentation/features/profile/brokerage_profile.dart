@@ -1,6 +1,5 @@
 import 'package:ag_broker/presentation/common/auth_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:ag_broker/l10n/app_localizations.dart';

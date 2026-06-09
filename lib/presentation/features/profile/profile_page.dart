@@ -51,7 +51,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           radius: 50,
                           backgroundColor: Theme.of(
                             context,
-                          ).primaryColor.withOpacity(0.1),
+                          ).primaryColor.withValues(alpha: 0.1),
                           child: Icon(
                             Icons.person,
                             size: 50,
@@ -192,7 +192,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return GradientInfoCard(
       margin: const EdgeInsets.all(0),
       gradientColors: [Colors.orange.shade700, Colors.orange.shade600],
-      shadowColor: Colors.orange.withOpacity(0.3),
+      shadowColor: Colors.orange.withValues(alpha: 0.3),
       icon: Icons.flash_on,
       label: localizations.power,
       value: _formatAmount(power.toString()),

@@ -1,16 +1,12 @@
 import 'package:dio/dio.dart';
 
 class ChatGptService {
-  final Dio _dio;
-  static const String _apiKey = '';
-  static const String _baseUrl = 'https://api.openai.com/v1';
+   final Dio _dio;
 
-   ChatGptService(String apiKey)
+  ChatGptService(String apiKey)
       : _dio = Dio(
           BaseOptions(
-            baseUrl: _baseUrl,
-            connectTimeout: const Duration(seconds: 30),
-            receiveTimeout: const Duration(seconds: 30),
+            baseUrl: 'https://api.openai.com/v1',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $apiKey',

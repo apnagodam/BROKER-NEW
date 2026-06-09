@@ -110,6 +110,8 @@ class UserDetails {
   dynamic vehicleMileage;
   dynamic vehicleFuelType;
   dynamic pqpk;
+  dynamic memberType;
+
 
   UserDetails({
     this.id,
@@ -172,6 +174,7 @@ class UserDetails {
     this.vehicleMileage,
     this.vehicleFuelType,
     this.pqpk,
+this.memberType,
   });
 
   factory UserDetails.fromJson(Map<dynamic, dynamic> json) => UserDetails(
@@ -235,6 +238,8 @@ class UserDetails {
     vehicleMileage: json["vehicle_mileage"],
     vehicleFuelType: json["vehicle_fuel_type"],
     pqpk: json["pqpk"],
+    memberType: json["member_type"],
+
   );
 
   Map<dynamic, dynamic> toJson() => {
@@ -298,5 +303,7 @@ class UserDetails {
     "vehicle_mileage": vehicleMileage,
     "vehicle_fuel_type": vehicleFuelType,
     "pqpk": pqpk,
+    "member_type": memberType,
+
   };
 }
