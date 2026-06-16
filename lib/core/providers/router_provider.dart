@@ -6,6 +6,8 @@ import 'package:ag_broker/presentation/features/members/authorized_person_page.d
 import 'package:ag_broker/presentation/features/members/member_hub_page.dart';
 import 'package:ag_broker/presentation/features/profile/brokerage_profile.dart';
 import 'package:ag_broker/presentation/features/wallet/trade_power_statement.dart';
+import 'package:ag_broker/presentation/marging/scheme_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ag_broker/presentation/features/auth/login/login_page.dart';
@@ -38,7 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (context, state) => LoginPage()),
       GoRoute(
         path: '/otp-verification',
-        builder: (context, state) {
+        builder: (context, state) { 
           final phoneNumber = state.uri.queryParameters['phone'] ?? '';
           return OtpVerificationPage(phoneNumber: phoneNumber);
         },
@@ -82,7 +84,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ── Wallet hub + sub-screens ───────────────────────────────────────────
       GoRoute(
         path: '/home/wallet',
-        builder: (context, state) => WalletHubPage(memberType: _getMemberType()),
+        builder: (context, state) =>
+            WalletHubPage(memberType: _getMemberType()),
       ),
       GoRoute(
         path: '/home/wallet-statement',
@@ -100,7 +103,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ── Members hub + sub-screens ──────────────────────────────────────────
       GoRoute(
         path: '/home/members',
-        builder: (context, state) => MembersHubPage(memberType: _getMemberType()),
+        builder: (context, state) =>
+            MembersHubPage(memberType: _getMemberType()),
       ),
       GoRoute(
         path: '/home/authorised-person',
@@ -110,12 +114,28 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/home/tm-fees',
         builder: (context, state) => const TmFeesPage(),
       ),
-      GoRoute(
+      GoRoute( 
         path: '/home/add-security',
         builder: (context, state) => const AddSecurityPage(),
       ),
+
+      // ── Margin Funding (STCM — memberType 3) ──────────────────────────────
+    GoRoute(
+  path: '/home/margin-funding-schemes',
+  builder: (context, state) => const MarginFundingSchemesPage(),
+),
+      GoRoute(
+        path: '/home/margin-funding-limit',
+        builder: (context, state) =>
+            const _PlaceholderPage(title: 'Margin Funding Limit'),
+      ),
+      GoRoute(  
+        path: '/home/margin-funding-request',
+        builder: (context, state) =>
+            const _PlaceholderPage(title: 'Margin Funding Request'),
+      ),
     ],
-    redirect: (context, state) {
+    redirect: (context, state) {   
       final isLoggedIn = SharedPreferencesService.isLoggedIn;
       final isLoginRoute =
           state.uri.path == '/login' || state.uri.path == '/otp-verification';
@@ -127,3 +147,41 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
   );
 });
+
+// ── Temporary placeholder — replace with real pages when ready ───────────────
+class _PlaceholderPage extends StatelessWidget {
+  final String title; 
+  const _PlaceholderPage({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  
+      appBar: AppBar( 
+        title: Text(title),
+        centerTitle: true,  
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+      ),
+      body: Center( 
+        child: Column(       
+          mainAxisSize: MainAxisSize.min,
+          children: [   
+            Icon(Icons.construction_outlined,
+                size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(       
+              title, 
+              style: const TextStyle(  
+                  fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(      
+              'Coming soon', 
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

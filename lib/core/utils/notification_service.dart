@@ -77,7 +77,7 @@ class NotificationService {
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
-      badge: true,
+      badge: true, 
       carPlay: false,
       criticalAlert: false,
       provisional: false,
@@ -187,7 +187,7 @@ class NotificationService {
           _apnsToken = newApns;
           print('APNS Token refreshed: $_apnsToken');
         });
-      } else {
+      } else {  
         print('Not an iOS device — skipping APNS token retrieval');
       }
     } catch (e) {
@@ -237,7 +237,7 @@ class NotificationService {
     // Example: if (message.data['type'] == 'bid') { navigate to bids }
   }
 
-  static void _onNotificationTapped(NotificationResponse response) {
+  static void _onNotificationTapped(NotificationResponse response) {  
     print('Notification tapped: ${response.payload}');
     // TODO: Handle notification tap and navigate to appropriate screen
   }
@@ -290,7 +290,7 @@ class NotificationService {
         final AndroidNotificationChannel dynamicChannel =
             AndroidNotificationChannel(
               androidChannelId,
-              androidChannelName,
+              androidChannelName, 
               description: 'Channel for $androidSound notifications',
               importance: Importance.high,
               playSound: true,
@@ -313,7 +313,7 @@ class NotificationService {
     }
 
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+        AndroidNotificationDetails( 
           androidChannelId,
           androidChannelName,
           channelDescription:
@@ -330,7 +330,7 @@ class NotificationService {
         DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
-          presentSound: true,
+          presentSound: true, 
           sound: iosSound,
         );
 
@@ -344,10 +344,10 @@ class NotificationService {
         DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title,
         body,
-        platformChannelSpecifics,
+        platformChannelSpecifics, 
         payload: payload,
       );
-    } catch (e) {
+    } catch (e) {  
       print('Error showing notification: $e');
       // If custom sound fails, try again with default sound
       if (androidSound != 'notification_sound') {
@@ -358,7 +358,7 @@ class NotificationService {
           channelDescription:
               'This channel is used for AG Broker app notifications',
           importance: Importance.max,
-          priority: Priority.high,
+          priority: Priority.high,  
           showWhen: true,
           enableVibration: true,
           playSound: true,
@@ -367,39 +367,39 @@ class NotificationService {
 
         final fallbackIOS = DarwinNotificationDetails(
           presentAlert: true,
-          presentBadge: true,
+          presentBadge: true, 
           presentSound: true,
           sound: 'notification_sound.mp3',
         );
 
-        await _flutterLocalNotificationsPlugin.show(
+        await _flutterLocalNotificationsPlugin.show( 
           DateTime.now().millisecondsSinceEpoch ~/ 1000,
-          title,
-          body,
+          title, 
+          body,  
           NotificationDetails(android: fallbackAndroid, iOS: fallbackIOS),
           payload: payload,
         );
-      } else {
+      } else {   
         rethrow;
       }
     }
   }
 
   // Subscribe to a topic
-  static Future<void> subscribeToTopic(String topic) async {
-    await _firebaseMessaging.subscribeToTopic(topic);
+  static Future<void> subscribeToTopic(String topic) async {  
+    await _firebaseMessaging.subscribeToTopic(topic);  
     print('Subscribed to topic: $topic');
   }
 
   // Unsubscribe from a topic
-  static Future<void> unsubscribeFromTopic(String topic) async {
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
+  static Future<void> unsubscribeFromTopic(String topic) async {  
+    await _firebaseMessaging.unsubscribeFromTopic(topic); 
     print('Unsubscribed from topic: $topic');
   }
 
   // Delete FCM token
   static Future<void> deleteToken() async {
-    await _firebaseMessaging.deleteToken();
+    await _firebaseMessaging.deleteToken(); 
     _fcmToken = null;
     print('FCM token deleted');
   }

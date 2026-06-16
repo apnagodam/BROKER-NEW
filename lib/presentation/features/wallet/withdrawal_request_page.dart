@@ -18,7 +18,7 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
   final _amountController = TextEditingController();
 
   @override
-  void initState() {
+  void initState() { 
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(authStateProvider.notifier).getUserDetails();
@@ -31,7 +31,7 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
     super.dispose();
   }
 
-  Future<void> _submitWithdrawalRequest() async {
+  Future<void> _submitWithdrawalRequest() async { 
     if (_formKey.currentState!.validate()) {
       final locale = Localizations.localeOf(context);
       final localizations = AppLocalizations.of(context)!;
@@ -68,8 +68,8 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        title: Text(
+      appBar: AppBar( 
+        title: Text( 
           localizations.withdrawalRequest,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
@@ -78,10 +78,10 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
         shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
-        actions: [
-          Text(
+        actions: [  
+          Text(   
             'Power: ${ref.watch(authStateProvider).userDetails?.userDetails?.power ?? '0.0'}  ',
-            style: const TextStyle(
+            style: const TextStyle(   
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.white,
@@ -91,22 +91,22 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Form(
+        child: Form( 
           key: _formKey,
-          child: Column(
+          child: Column(  
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: [   
               // Info Card
-              Container(
+              Container( 
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.blue.shade100),
                 ),
-                child: Row(
-                  children: [
-                    Icon(  
+                child: Row(  
+                  children: [   
+                    Icon( 
                       Icons.info_outline,
                       color: Colors.blue.shade700,
                       size: 24,
@@ -127,99 +127,99 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
               const SizedBox(height: 24),
 
               // Amount Input Card
-              Container(
+              Container(  
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
-                    BoxShadow(
+                    BoxShadow(  
                       color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: Column(
+                child: Column(   
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(   
+                  children: [  
+                    Text(
                       localizations.withdrawalAmount,
-                      style: TextStyle(
+                      style: TextStyle( 
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.grey.shade800,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
+                    TextFormField(  
                       controller: _amountController,
                       keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
+                      inputFormatters: [ 
+                        FilteringTextInputFormatter.allow( 
                           RegExp(r'^\d*\.?\d{0,2}'),
                         ),
                       ],
-                      style: const TextStyle(
-                        fontSize: 24,
+                      style: const TextStyle( 
+                        fontSize: 24, 
                         fontWeight: FontWeight.bold,
                       ),
-                      decoration: InputDecoration(
-                        prefixIcon: Padding(
+                      decoration: InputDecoration(  
+                        prefixIcon: Padding(  
                           padding: const EdgeInsets.only(left: 16, right: 8),
-                          child: Text(
+                          child: Text(    
                             '₹',
-                            style: TextStyle(
+                            style: TextStyle( 
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
-                        prefixIconConstraints: const BoxConstraints(
+                        prefixIconConstraints: const BoxConstraints(  
                           minWidth: 0,
                           minHeight: 0,
                         ),
                         hintText: '0.00',
-                        hintStyle: TextStyle(
+                        hintStyle: TextStyle(  
                           color: Colors.grey.shade400,
                           fontWeight: FontWeight.normal,
                         ),
                         filled: true,
                         fillColor: Colors.grey.shade50,
-                        border: OutlineInputBorder(
+                        border: OutlineInputBorder(  
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: OutlineInputBorder( 
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: Colors.grey.shade200),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(  
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
+                          borderSide: BorderSide(  
                             color: Theme.of(context).primaryColor,
                             width: 2,
                           ),
                         ),
-                        errorBorder: OutlineInputBorder(
+                        errorBorder: OutlineInputBorder( 
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(color: Colors.red),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(  
                           horizontal: 16,
                           vertical: 16,
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.isEmpty) {  
                           return localizations.pleaseEnterAmount;
                         }
                         final amount = double.tryParse(value);
                         if (amount == null) {
                           return localizations.pleaseEnterValidAmount;
                         }
-                        if (amount <= 0) {
+                        if (amount <= 0) {  
                           return localizations.amountMustBeGreaterThanZero;
                         }
                         return null;
@@ -231,11 +231,11 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
               const SizedBox(height: 32),
 
               // Submit Button
-              ElevatedButton(
+              ElevatedButton(  
                 onPressed: withdrawalState.isSubmitting
                     ? null
                     : _submitWithdrawalRequest,
-                style: ElevatedButton.styleFrom(
+                style: ElevatedButton.styleFrom(    
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -246,17 +246,17 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
                   disabledBackgroundColor: Colors.grey.shade300,
                 ),
                 child: withdrawalState.isSubmitting
-                    ? const SizedBox(
+                    ? const SizedBox(   
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(
+                        child: CircularProgressIndicator(  
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Colors.white,
                           ),
                         ),
                       )
-                    : Text(
+                    : Text(  
                         localizations.submitRequest,
                         style: const TextStyle(
                           fontSize: 16,
@@ -267,24 +267,24 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
               const SizedBox(height: 16),
 
               // View History Button
-              OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.push(
+              OutlinedButton.icon(        
+                onPressed: () {  
+                  Navigator.push(    
                     context,
-                    MaterialPageRoute(
+                    MaterialPageRoute( 
                       builder: (context) => const WithdrawalListPage(),
                     ),
                   );
                 },
                 icon: const Icon(Icons.history),
                 label: Text(localizations.viewWithdrawalHistory),
-                style: OutlinedButton.styleFrom(
+                style: OutlinedButton.styleFrom(  
                   foregroundColor: Theme.of(context).primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
+                  shape: RoundedRectangleBorder(   
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  side: BorderSide(
+                  side: BorderSide(    
                     color: Theme.of(context).primaryColor,
                     width: 1.5,
                   ),

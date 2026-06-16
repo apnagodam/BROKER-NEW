@@ -83,7 +83,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                   const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(
+                    child: Text(  
                       clientState.error!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -94,8 +94,8 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      _fetchClientList();
+                    onPressed: () {     
+                      _fetchClientList();    
                     },
                     icon: const Icon(Icons.refresh),
                     label: Text(localizations.retry),
@@ -117,10 +117,10 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
+                children: [  
+                  Icon(  
                     Icons.people_outline,
-                    size: 64,
+                    size: 64,  
                     color: Colors.grey.shade400,
                   ),
                   const SizedBox(height: 16),
@@ -132,7 +132,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () async {
+              onRefresh: () async {   
                 _fetchClientList();
               },
               child: ListView.builder(
@@ -157,7 +157,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
         borderRadius: BorderRadius.circular(12),
         onTap: () {
         },
-        child: Padding(
+        child: Padding(   
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +167,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Avatar Icon
-                  Container(
+                  Container(   
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
@@ -183,7 +183,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                   const SizedBox(width: 12),
                   // Name and Constitution
                   Expanded(
-                    child: Column( 
+                    child: Column(   
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -195,9 +195,9 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        Text(      
                           client.constitution?.toString() ?? 'N/A',
-                          style: TextStyle(
+                          style: TextStyle(    
                             fontSize: 13,
                             color: Colors.grey.shade600,
                             fontWeight: FontWeight.w500,
@@ -216,12 +216,12 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  _buildApprovalChip(
+                  _buildApprovalChip(   
                     context,
                     localizations.approved,
                     client.approveBy,
                   ),
-                  _buildApprovalChip(
+                  _buildApprovalChip(   
                     context,
                     localizations.verified,
                     client.verifyBy,
@@ -242,7 +242,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
     );
   }
 
-  Widget _buildInfoSection(
+  Widget _buildInfoSection(   
     BuildContext context,
     AppLocalizations localizations,
     LpClient client,
@@ -251,16 +251,16 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
       children: [
         Row(
           children: [
-            Expanded(
-              child: _buildInfoItem(
+            Expanded(  
+              child: _buildInfoItem(  
                 Icons.phone_outlined,
                 localizations.phone,
                 client.phone?.toString() ?? 'N/A',
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
-              child: _buildInfoItem(
+            Expanded(  
+              child: _buildInfoItem(    
                 Icons.badge_outlined,
                 localizations.userId,
                 client.userId?.toString() ?? 'N/A',
@@ -271,10 +271,10 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
         if (client.panNumber != null || client.aadharNumber != null) ...[
           const SizedBox(height: 12),
           Row(
-            children: [
+            children: [   
               if (client.panNumber != null)
-                Expanded(
-                  child: _buildInfoItem(
+                Expanded(    
+                  child: _buildInfoItem(    
                     Icons.credit_card,
                     localizations.pan,
                     client.panNumber.toString(),
@@ -295,7 +295,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
         ],
         if (client.gstNumber != null) ...[
           const SizedBox(height: 12),
-          _buildInfoItem(
+          _buildInfoItem(   
             Icons.receipt_long_outlined,
             localizations.gst,
             client.gstNumber.toString(),
@@ -306,14 +306,14 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
   }
 
   Widget _buildInfoItem(IconData icon, String label, String value) {
-    return Container(
+    return Container(   
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade200),
       ),
-      child: Column(
+      child: Column(  
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -321,7 +321,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
               Icon(icon, size: 16, color: Colors.grey.shade600),
               const SizedBox(width: 6),
               Expanded(
-                child: Text(
+                child: Text(  
                   label,
                   style: TextStyle(
                     fontSize: 11,
@@ -333,7 +333,7 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
             ],
           ),
           const SizedBox(height: 4),
-          Text(
+          Text(  
             value,
             style: const TextStyle(
               fontSize: 13,
@@ -351,14 +351,14 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
   Widget _buildApprovalChip(BuildContext context, String label, dynamic value) {
     final bool hasValue = value != null;
     return Chip(
-      avatar: Icon(
+      avatar: Icon(  
         hasValue ? Icons.check_circle : Icons.cancel,
         size: 18,
         color: Colors.white,
       ),
       label: Text(
         label,
-        style: const TextStyle(
+        style: const TextStyle(  
           fontSize: 12,
           color: Colors.white,
           fontWeight: FontWeight.w600,

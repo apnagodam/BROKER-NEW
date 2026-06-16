@@ -87,7 +87,7 @@ class SbtProduct {
   }
 
   Map<dynamic, dynamic> toJson() {
-    return {
+    return {  
       'product_id': productId,
       'district_id': districtId,
       'district': district,

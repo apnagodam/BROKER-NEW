@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // State class for withdrawal
-class WithdrawalState {
+class WithdrawalState {  
   final WithdrawalListModel? withdrawalList;
   final bool isLoading;
   final bool isSubmitting;
@@ -20,14 +20,14 @@ class WithdrawalState {
     this.successMessage,
   });
 
-  WithdrawalState copyWith({
+  WithdrawalState copyWith({                  
     WithdrawalListModel? withdrawalList,
     bool? isLoading,
     bool? isSubmitting,
     String? error,
     String? successMessage,
   }) {
-    return WithdrawalState(
+    return WithdrawalState(   
       withdrawalList: withdrawalList ?? this.withdrawalList,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -38,26 +38,26 @@ class WithdrawalState {
 }
 
 // State Notifier for withdrawal operations
-class WithdrawalStateNotifier extends StateNotifier<WithdrawalState> {
+class WithdrawalStateNotifier extends StateNotifier<WithdrawalState> {      
   final WalletRepository repository;
 
   WithdrawalStateNotifier(this.repository) : super(WithdrawalState());
 
   Future<bool> createWithdrawalRequest(String requestedAmount) async {
-    state = state.copyWith(
-      isSubmitting: true,
+    state = state.copyWith(   
+      isSubmitting: true, 
       error: null,
       successMessage: null,
     );
 
     try {
-      final response = await repository.createWithdrawalRequest(
+      final response = await repository.createWithdrawalRequest(    
         requestedAmount: requestedAmount,
       );
 
       if (response['status'] == '1' || response['status'] == 1) {
         state = state.copyWith(
-          isSubmitting: false,
+          isSubmitting: false,  
           successMessage:
               response['message'] ??
               'Withdrawal request submitted successfully',
@@ -65,8 +65,8 @@ class WithdrawalStateNotifier extends StateNotifier<WithdrawalState> {
         // Refresh the list after successful submission
         await fetchWithdrawalList();
         return true;
-      } else {
-        state = state.copyWith(
+      } else {  
+        state = state.copyWith(      
           isSubmitting: false,
           error: response['message'] ?? 'Failed to submit withdrawal request',
         );
@@ -78,22 +78,22 @@ class WithdrawalStateNotifier extends StateNotifier<WithdrawalState> {
     }
   }
 
-  Future<void> fetchWithdrawalList() async {
+  Future<void> fetchWithdrawalList() async {            
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       final withdrawalList = await repository.getWithdrawalList();
       state = state.copyWith(withdrawalList: withdrawalList, isLoading: false);
-    } catch (e) {
+    } catch (e) {  
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
-  void clearError() {
+  void clearError() {        
     state = state.copyWith(error: null);
   }
 
-  void clearSuccessMessage() {
+  void clearSuccessMessage() {   
     state = state.copyWith(successMessage: null);
   }
 }
@@ -104,7 +104,7 @@ final withdrawalStateProvider =
       WithdrawalStateNotifier,
       WithdrawalState,
       Locale
-    >((ref, locale) {
+    >((ref, locale) {  
       final repository = WalletRepositoryImpl(locale);
       return WithdrawalStateNotifier(repository);
     });

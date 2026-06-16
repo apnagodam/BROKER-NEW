@@ -40,31 +40,31 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ? Center(child: Text(localizations.noDataAvailable))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
+              child: Column(  
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: [  
                   // Profile Header
                   Center(
-                    child: Column(
+                    child: Column( 
                       children: [
                         CircleAvatar(
                           radius: 50,
                           backgroundColor: Theme.of(
                             context,
                           ).primaryColor.withValues(alpha: 0.1),
-                          child: Icon(
+                          child: Icon(   
                             Icons.person,
                             size: 50,
                             color: Theme.of(context).primaryColor,
                           ),
                         ),
                         SizedBox(height: 16),
-                        Text(
+                        Text(  
                           loginResponse.userDetails?.name ?? "",
                           style: Theme.of(context).textTheme.headlineMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        Text(
+                        Text(  
                           loginResponse.userDetails.phone,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(color: Colors.grey.shade600),
@@ -75,7 +75,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   SizedBox(height: 32),
 
                   // User Details Section
-                  Text(
+                  Text(  
                     localizations.personalInformation,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -83,19 +83,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  _buildPowerSection(
+                  _buildPowerSection(    
                     userDetails!,
                     AppLocalizations.of(context)!,
                   ),
 
                   SizedBox(height: 16),
-                  _buildInfoCard(
+                  _buildInfoCard(  
                     context,
                     title: localizations.uniqueId,
                     value: loginResponse.userDetails.uniqueId,
                   ),
                   if (loginResponse.userDetails.email != null)
-                    _buildInfoCard(
+                    _buildInfoCard(  
                       context,
                       title: localizations.email,
                       value: loginResponse.userDetails.email!,
@@ -107,7 +107,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       value: loginResponse.userDetails.age.toString(),
                     ),
                   if (loginResponse.userDetails.fullAddress != null)
-                    _buildInfoCard(
+                    _buildInfoCard(  
                       context,
                       title: localizations.address,
                       value: loginResponse.userDetails.fullAddress!,
@@ -116,7 +116,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   SizedBox(height: 32),
 
                   // Bank Information Section
-                  Text(
+                  Text(  
                     localizations.bankInformation,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -125,19 +125,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                   SizedBox(height: 16),
                   if (loginResponse.userDetails.bankName != null)
-                    _buildInfoCard(
+                    _buildInfoCard(   
                       context,
                       title: localizations.bankName,
                       value: loginResponse.userDetails.bankName!,
                     ),
                   if (loginResponse.userDetails.bankIfscCode != null)
-                    _buildInfoCard(
+                    _buildInfoCard(    
                       context,
                       title: localizations.ifscCode,
                       value: loginResponse.userDetails.bankIfscCode!,
                     ),
                   if (loginResponse.userDetails.accountNo != null)
-                    _buildInfoCard(
+                    _buildInfoCard(     
                       context,
                       title: localizations.accountNumber,
                       value: loginResponse.userDetails.accountNo!,
@@ -148,7 +148,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   SizedBox(height: 32),
 
                   // Status Information
-                  Text(
+                  Text(   
                     localizations.statusInformation,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -156,21 +156,21 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  _buildInfoCard(
+                  _buildInfoCard(     
                     context,
                     title: localizations.activeStatus,
                     value: loginResponse.active == 1
                         ? localizations.active
                         : localizations.inactive,
                   ),
-                  _buildInfoCard(
-                    context,
+                  _buildInfoCard(        
+                    context, 
                     title: localizations.approvalStatus,
                     value: loginResponse.userDetails.approve == 1
                         ? localizations.approved
                         : localizations.pending,
                   ),
-                  _buildInfoCard(
+                  _buildInfoCard(  
                     context,
                     title: localizations.verificationStatus,
                     value: loginResponse.userDetails.verify == 1
@@ -183,13 +183,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget _buildPowerSection(
+  Widget _buildPowerSection(  
     UserDetailsModel userDetails,
     AppLocalizations localizations,
-  ) {
+  ) {  
     final power = userDetails.userDetails?.power ?? 0;
 
-    return GradientInfoCard(
+    return GradientInfoCard(       
       margin: const EdgeInsets.all(0),
       gradientColors: [Colors.orange.shade700, Colors.orange.shade600],
       shadowColor: Colors.orange.withValues(alpha: 0.3),
@@ -199,8 +199,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  String _formatAmount(String amount) {
-    try {
+  String _formatAmount(String amount) {   
+    try {    
       final double value = double.parse(amount);
       final formatter = NumberFormat('#,##,##0.00', 'en_IN');
       return formatter.format(value);
@@ -209,30 +209,30 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
   }
 
-  Widget _buildInfoCard(
-    BuildContext context, {
+  Widget _buildInfoCard(  
+    BuildContext context, {    
     required String title,
     required String value,
   }) {
-    return Card(
+    return Card(   
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
+        child: Row(  
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Text(
+            Expanded( 
+              child: Text(   
                 title,
-                style: Theme.of(
-                  context,
+                style: Theme.of(   
+                  context, 
                 ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
               ),
             ),
-            Expanded(
-              child: Text(
+            Expanded(   
+              child: Text(     
                 value,
-                style: Theme.of(
+                style: Theme.of(      
                   context,
                 ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 textAlign: TextAlign.right,

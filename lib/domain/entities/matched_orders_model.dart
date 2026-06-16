@@ -40,7 +40,7 @@ class SbtMatchedOrderResponse {
     dynamic message,
     List<TradeOrderData>? tradeOrderData,
   }) {
-    return SbtMatchedOrderResponse(
+    return SbtMatchedOrderResponse( 
       status: status ?? this.status,
       message: message ?? this.message,
       tradeOrderData: tradeOrderData ?? this.tradeOrderData,
@@ -115,8 +115,8 @@ class TradeOrderData {
     };
   }
 
-  TradeOrderData copyWith({
-    dynamic orderId,
+  TradeOrderData copyWith({  
+    dynamic orderId,  
     dynamic seller,
     dynamic buyer,
     dynamic commodity,
@@ -148,7 +148,7 @@ class TradeOrderData {
   }
 
   // Helper method to calculate pending quantity
-  dynamic get pendingQty {
+  dynamic get pendingQty {  
     final total = double.tryParse(qty ?? '0') ?? 0.0;
     final delivered = double.tryParse(deliveryQty ?? '0') ?? 0.0;
     return total - delivered;

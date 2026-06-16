@@ -15,12 +15,12 @@ class WalletStatementPage extends ConsumerStatefulWidget {
   _WalletStatementPageState createState() => _WalletStatementPageState();
 }
 
-class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
+class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {   
   DateTime? _fromDate;
   DateTime? _toDate;
 
   @override
-  void initState() {
+  void initState() {   
     super.initState();
     // Initialize with default date range (last 30 days)
     _toDate = DateTime.now();
@@ -33,7 +33,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     });
   }
 
-  void _fetchWalletStatement() {
+  void _fetchWalletStatement() {  
     final locale = Localizations.localeOf(context);
     final fromDateStr = DateFormat('yyyy-MM-dd').format(_fromDate!);
     final toDateStr = DateFormat('yyyy-MM-dd').format(_toDate!);
@@ -43,12 +43,12 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     final locale = Localizations.localeOf(context);
     final walletState = ref.watch(walletStateProvider(locale));
     final localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return Scaffold(  
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
@@ -68,7 +68,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  Icon(  
                     Icons.error_outline,
                     size: 64,
                     color: Colors.red.shade300,
@@ -85,7 +85,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                   const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(
+                    child: Text(  
                       walletState.error!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -96,7 +96,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () {  
                       _fetchWalletStatement();
                     },
                     icon: const Icon(Icons.refresh),
@@ -168,7 +168,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
           Expanded(
             child: _buildDateField(
               context,
-              'From Date',
+              'From Date',  
               _fromDate!,
               () => _selectFromDate(context),
             ),
@@ -177,10 +177,10 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
           Icon(Icons.arrow_forward, color: Colors.grey.shade400, size: 20),
           const SizedBox(width: 12),
           Expanded(
-            child: _buildDateField(
-              context,
-              'To Date',
-              _toDate!,
+            child: _buildDateField(  
+              context,   
+              'To Date',    
+              _toDate!,     
               () => _selectToDate(context),
             ),
           ),
@@ -195,7 +195,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     DateTime date,
     VoidCallback onTap,
   ) {
-    return InkWell(
+    return InkWell(  
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
@@ -218,8 +218,8 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                 const SizedBox(width: 6),
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 11,
+                  style: TextStyle(     
+                    fontSize: 11,  
                     color: Colors.grey.shade600,
                     fontWeight: FontWeight.w500,
                   ),
@@ -227,10 +227,10 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
               ],
             ),
             const SizedBox(height: 6),
-            Text(
+            Text( 
               DateFormat('dd MMM yyyy').format(date),
-              style: const TextStyle(
-                fontSize: 14,
+              style: const TextStyle(  
+                fontSize: 14, 
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
@@ -438,7 +438,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          Text(  
             amount,
             style: const TextStyle(
               color: Colors.white,
@@ -492,10 +492,10 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     );
   }
 
-  Widget _buildTransactionCard(
+  Widget _buildTransactionCard(  
     BuildContext context,
     TransactionData transaction,
-  ) {
+  ) {  
     final localizations = AppLocalizations.of(context)!;
     final isCredit = transaction.type?.toString().toLowerCase() == 'credit';
     final date = _formatDate(transaction.date.toString());
@@ -515,18 +515,18 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
+              Row( 
+                children: [  
                   // Transaction Icon
                   Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    decoration: BoxDecoration(  
                       color: isCredit
                           ? Colors.green.shade50
                           : Colors.red.shade50,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(
+                    child: Icon( 
                       isCredit ? Icons.arrow_downward : Icons.arrow_upward,
                       color: isCredit ? Colors.green : Colors.red,
                       size: 20,
@@ -552,16 +552,16 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                         const SizedBox(height: 4),
                         Text(
                           transaction.referenceNo ?? '',
-                          style: TextStyle(
-                            fontSize: 13,
+                          style: TextStyle(    
+                            fontSize: 13,  
                             color: Colors.grey.shade600,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           date,
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: TextStyle(   
+                            fontSize: 12,  
                             color: Colors.grey.shade500,
                           ),
                         ),
@@ -573,7 +573,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
+                      Text(  
                         '${isCredit ? '+' : '-'} ₹${_formatAmount(transaction.amount ?? "0")}',
                         style: TextStyle(
                           fontSize: 16,
@@ -582,9 +582,9 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      Text(   
                         '${localizations.balance}: ₹${_formatAmount(transaction.balance ?? "0")}',
-                        style: TextStyle(
+                        style: TextStyle(  
                           fontSize: 11,
                           color: Colors.grey.shade600,
                         ),
@@ -600,37 +600,37 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     );
   }
 
-  void _showTransactionDetails(
+  void _showTransactionDetails(   
     BuildContext context,
     TransactionData transaction,
   ) {
     final localizations = AppLocalizations.of(context)!;
     final isCredit = transaction.type?.toString().toLowerCase() == 'credit';
 
-    showModalBottomSheet(
+    showModalBottomSheet( 
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
+        decoration: const BoxDecoration(  
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(24),
-        child: Column(
+        child: Column(  
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
             Row(
               children: [
-                Container(
+                Container(    
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isCredit ? Colors.green.shade50 : Colors.red.shade50,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: Icon( 
                     isCredit ? Icons.arrow_downward : Icons.arrow_upward,
                     color: isCredit ? Colors.green : Colors.red,
                     size: 24,
@@ -648,9 +648,9 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      Text( 
                         transaction.type ?? localizations.unknown,
-                        style: TextStyle(
+                        style: TextStyle(   
                           fontSize: 14,
                           color: isCredit ? Colors.green : Colors.red,
                           fontWeight: FontWeight.w600,
@@ -659,7 +659,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
                     ],
                   ),
                 ),
-                IconButton(
+                IconButton( 
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close),
                 ),
@@ -668,7 +668,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
             const SizedBox(height: 24),
 
             // Amount
-            _buildDetailRow(
+            _buildDetailRow( 
               localizations.amount,
               '₹${_formatAmount(transaction.amount ?? "0")}',
               isHighlight: true,
@@ -676,14 +676,14 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
             const Divider(height: 24),
 
             // Label
-            _buildDetailRow(
+            _buildDetailRow( 
               localizations.label,
               transaction.label ?? localizations.unknown,
             ),
             const SizedBox(height: 12),
 
             // Reference Number
-            _buildDetailRow(
+            _buildDetailRow(  
               localizations.referenceNumber,
               transaction.referenceNo ?? '-',
             ),
@@ -697,7 +697,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
             const SizedBox(height: 12),
 
             // Date
-            _buildDetailRow(
+            _buildDetailRow(  
               localizations.date,
               _formatDate(transaction.date.toString()),
             ),
@@ -707,14 +707,14 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
             const Divider(height: 24),
             Text(
               localizations.narration,
-              style: TextStyle(
+              style: TextStyle(  
                 fontSize: 12,
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 6),
-            Text(
+            Text(   
               transaction.narration ?? localizations.noDataAvailable,
               style: const TextStyle(fontSize: 14, color: Colors.black87),
             ),
@@ -725,23 +725,23 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     );
   }
 
-  Widget _buildDetailRow(
+  Widget _buildDetailRow(   
     String label,
-    String value, {
+    String value, {  
     bool isHighlight = false,
   }) {
-    return Row(
+    return Row(   
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text( 
+        Text(   
           label,
-          style: TextStyle(
+          style: TextStyle(   
             fontSize: 13,
             color: Colors.grey.shade600,
             fontWeight: FontWeight.w500,
           ),
         ),
-        Text(
+        Text( 
           value,
           style: TextStyle(
             fontSize: isHighlight ? 18 : 14,
@@ -756,7 +756,7 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
   }
 
   String _formatAmount(String amount) {
-    try {
+    try {   
       final double value = double.parse(amount);
       final formatter = NumberFormat('#,##,##0.00', 'en_IN');
       return formatter.format(value);

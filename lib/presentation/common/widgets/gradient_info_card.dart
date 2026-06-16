@@ -44,7 +44,7 @@ class GradientInfoCard extends StatelessWidget {
   final MainAxisAlignment alignment;
 
   const GradientInfoCard({
-    Key? key,
+    super.key,
     this.margin = const EdgeInsets.all(16),
     this.padding = const EdgeInsets.all(20),
     required this.gradientColors,
@@ -56,7 +56,7 @@ class GradientInfoCard extends StatelessWidget {
     this.labelFontSize = 13,
     this.valueFontSize = 24,
     this.alignment = MainAxisAlignment.start,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +64,13 @@ class GradientInfoCard extends StatelessWidget {
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: LinearGradient( 
           colors: gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: [  
           BoxShadow(
             color: shadowColor,
             blurRadius: 12,
@@ -81,15 +81,15 @@ class GradientInfoCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: alignment,
         children: [
-          Icon(icon, color: Colors.white.withOpacity(0.9), size: iconSize),
+          Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: iconSize),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                style: TextStyle(  
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontSize: labelFontSize,
                   fontWeight: FontWeight.w500,
                 ),
@@ -97,7 +97,7 @@ class GradientInfoCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 value,
-                style: TextStyle(
+                style: TextStyle( 
                   color: Colors.white,
                   fontSize: valueFontSize,
                   fontWeight: FontWeight.bold,

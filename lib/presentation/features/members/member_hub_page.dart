@@ -15,7 +15,7 @@ class MembersHubPage extends StatelessWidget {
 
     final List<_MemberItem> items = [
       // Client List — all roles
-      _MemberItem(
+      _MemberItem(    
         icon: Icons.people_outline,
         iconColor: primary,
         iconBg: primary.withValues(alpha: 0.1),
@@ -37,7 +37,7 @@ class MembersHubPage extends StatelessWidget {
 
       // Add Security — TM (2) only
       if (memberType == 2)
-        _MemberItem(
+        _MemberItem(  
           icon: Icons.security_outlined,
           iconColor: Colors.red.shade800,
           iconBg: Colors.red.shade50,
@@ -48,7 +48,7 @@ class MembersHubPage extends StatelessWidget {
 
       // Trading Member — STCM (3) only
       if (memberType == 3)
-        _MemberItem(
+        _MemberItem( 
           icon: Icons.account_balance_outlined,
           iconColor: Colors.deepPurple.shade700,
           iconBg: Colors.deepPurple.shade50,
@@ -59,7 +59,7 @@ class MembersHubPage extends StatelessWidget {
 
       // TM Fees — TM (2) only
       if (memberType == 2)
-        _MemberItem(
+        _MemberItem(   
           icon: Icons.currency_rupee_rounded,
           iconColor: Colors.orange.shade800,
           iconBg: Colors.orange.shade50,
@@ -70,7 +70,7 @@ class MembersHubPage extends StatelessWidget {
 
       // Margin Funding items — STCM (3) only
       if (memberType == 3) ...[
-        _MemberItem(
+        _MemberItem(    
           icon: Icons.percent_outlined,
           iconColor: Colors.green.shade700,
           iconBg: Colors.green.shade50,
@@ -78,7 +78,7 @@ class MembersHubPage extends StatelessWidget {
           subtitle: 'View margin funding schemes',
           route: '/home/margin-funding-schemes',
         ),
-        _MemberItem(
+        _MemberItem(  
           icon: Icons.credit_score_outlined,
           iconColor: Colors.green.shade700,
           iconBg: Colors.green.shade50,
@@ -86,7 +86,7 @@ class MembersHubPage extends StatelessWidget {
           subtitle: 'Check your funding limits',
           route: '/home/margin-funding-limit',
         ),
-        _MemberItem(
+        _MemberItem(  
           icon: Icons.request_page_outlined,
           iconColor: Colors.green.shade700,
           iconBg: Colors.green.shade50,
@@ -97,8 +97,8 @@ class MembersHubPage extends StatelessWidget {
       ],
     ];
 
-    return Scaffold(
-      appBar: AppBar(
+    return Scaffold(  
+      appBar: AppBar( 
         title: const Text('Members'),
         centerTitle: true,
         backgroundColor: primary,
@@ -106,53 +106,53 @@ class MembersHubPage extends StatelessWidget {
       ),
       body: items.isEmpty
           ? Center(
-              child: Text(
+              child: Text(   
                 'No options available.',
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
               ),
             )
-          : ListView.separated(
+          : ListView.separated(   
               padding:
                   const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               itemCount: items.length,
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final item = items[index];
-                return Card(
+                return Card(  
                   elevation: 0,
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(color: Colors.grey.shade200),
                   ),
-                  child: ListTile(
+                  child: ListTile(   
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 8),
-                    leading: Container(
+                    leading: Container(   
                       width: 44,
                       height: 44,
-                      decoration: BoxDecoration(
+                      decoration: BoxDecoration(  
                         color: item.iconBg,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child:
                           Icon(item.icon, color: item.iconColor, size: 22),
                     ),
-                    title: Text(
+                    title: Text(  
                       item.title,
-                      style: const TextStyle(
+                      style: const TextStyle( 
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
                     ),
-                    subtitle: Text(
+                    subtitle: Text(   
                       item.subtitle,
-                      style: TextStyle(
+                      style: TextStyle(    
                         fontSize: 12,
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    trailing: Icon(Icons.chevron_right,
+                    trailing: Icon(Icons.chevron_right, 
                         color: Colors.grey.shade400, size: 22),
                     onTap: () => context.go(item.route),
                   ),
@@ -163,8 +163,8 @@ class MembersHubPage extends StatelessWidget {
   }
 }
 
-class _MemberItem {
-  final IconData icon;
+class _MemberItem { 
+  final IconData icon; 
   final Color iconColor;
   final Color iconBg;
   final String title;

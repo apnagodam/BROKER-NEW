@@ -60,7 +60,7 @@ class _TruckLoadDetailsScreenState
         elevation: 0,
       ),
       body: RefreshIndicator(
-        child: SingleChildScrollView(
+        child: SingleChildScrollView(  
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -105,7 +105,7 @@ class _TruckLoadDetailsScreenState
                                     .warehouseName ??
                                 '',
                           ),
-                          style: TextStyle(
+                          style: TextStyle(  
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _TruckLoadDetailsScreenState
                                     .commodityName ??
                                 '',
                           ),
-                          style: TextStyle(
+                          style: TextStyle(   
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class _TruckLoadDetailsScreenState
                             ),
 
                             // Vertical Divider
-                            Container(
+                            Container(  
                               width: 2,
                               height: 40,
                               color: Colors.white,
@@ -218,7 +218,7 @@ class _TruckLoadDetailsScreenState
 
                 // Bid Input Section
                 Row(
-                  children: [
+                  children: [ 
                     Expanded(
                       child: Card(
                         elevation: 4,
@@ -288,7 +288,7 @@ class _TruckLoadDetailsScreenState
                         .data![widget.index]
                         .stackBuySellConver!
                         .isNotEmpty)
-                  Card(
+                  Card( 
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -298,7 +298,7 @@ class _TruckLoadDetailsScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          Text(  
                             localizations.bidHistory,
                             style: TextStyle(
                               color: Color(0xFF2E7D32),
@@ -332,7 +332,7 @@ class _TruckLoadDetailsScreenState
 
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
+                                    border: Border.all(  
                                       color: isMyBid
                                           ? Colors.amber.shade900
                                           : Colors.grey.shade300,
@@ -342,10 +342,10 @@ class _TruckLoadDetailsScreenState
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: [
+                                    children: [  
                                       Padding(
                                         padding: EdgeInsetsGeometry.all(10),
-                                        child: Column(
+                                        child: Column(  
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
@@ -353,7 +353,7 @@ class _TruckLoadDetailsScreenState
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
-                                              children: [
+                                              children: [ 
                                                 Expanded(
                                                   child: Row(
                                                     children: [
@@ -446,7 +446,7 @@ class _TruckLoadDetailsScreenState
 
                                             if (bid.createdAt != null) ...[
                                               SizedBox(height: 4),
-                                              Text(
+                                              Text(    
                                                 '${localizations.date}: ${bid.createdAt}',
                                                 style: TextStyle(
                                                   fontSize: 16,
@@ -456,7 +456,7 @@ class _TruckLoadDetailsScreenState
                                             ],
 
                                             SizedBox(height: 4),
-                                            Text(
+                                            Text(  
                                               !isMyBid
                                                   ? "${localizations.buyer} ${ref.watch(stackStateProvider).stackSellData!.data![widget.index].stackBuySellConver!.indexOf(bid) + 1}"
                                                   : '${localizations.unknown}: ${isMyName ? "${localizations.buyer} ${ref.watch(stackStateProvider).stackSellData!.data![widget.index].stackBuySellConver!.indexOf(bid) + 1} " : bid.userName ?? '${localizations.unknown} ${ref.watch(stackStateProvider).stackSellData!.data![widget.index].stackBuySellConver!.indexOf(bid) + 1}'}',
@@ -469,7 +469,7 @@ class _TruckLoadDetailsScreenState
                                         ),
                                       ),
                                       if (isMyBid)
-                                        Container(
+                                        Container(  
                                           width: double.infinity,
                                           padding: EdgeInsets.all(6),
                                           decoration: BoxDecoration(
@@ -498,7 +498,7 @@ class _TruckLoadDetailsScreenState
                     ),
                   ),
 
-                if (ref
+                if (ref 
                             .watch(stackStateProvider)
                             .stackSellData
                             ?.data?[widget.index]
@@ -517,7 +517,7 @@ class _TruckLoadDetailsScreenState
             ),
           ),
         ),
-        onRefresh: () {
+        onRefresh: () {  
           return ref.watch(stackStateProvider.notifier).fetchStackSellList();
         },
       ),
@@ -526,15 +526,15 @@ class _TruckLoadDetailsScreenState
 
   Widget bidSubmitLayout(AppLocalizations localizations) => Consumer(
     builder: (context, ref, child) => SingleChildScrollView(
-      child: Column(
+      child: Column(  
         mainAxisSize: MainAxisSize.min,
         children: [
           Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+              children: [   
+                Text(   
                   localizations.enterYourBidAmount,
                   style: TextStyle(
                     color: Color(0xFF2E7D32),
@@ -545,13 +545,13 @@ class _TruckLoadDetailsScreenState
                 SizedBox(height: 16),
 
                 // Bid Amount Input
-                TextFormField(
+                TextFormField(   
                   controller: _bidAmountController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     hintText: localizations.enterBidAmountHint,
-                    prefixIcon: Icon(
+                    prefixIcon: Icon(  
                       Icons.currency_rupee,
                       color: Color(0xFF2E7D32),
                     ),
@@ -581,7 +581,7 @@ class _TruckLoadDetailsScreenState
                       borderSide: BorderSide(color: Colors.red, width: 2),
                     ),
                   ),
-                  validator: (value) {
+                  validator: (value) {   
                     if (value == null || value.isEmpty) {
                       return localizations.pleaseEnterBidAmount;
                     }
@@ -597,15 +597,15 @@ class _TruckLoadDetailsScreenState
                 ),
                 SizedBox(height: 16),
                 // Client selection dropdown
-                Container(
+                Container(   
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: DropdownButtonHideUnderline(
+                  child: DropdownButtonHideUnderline(  
                     child: Builder(
-                      builder: (context) {
+                      builder: (context) {  
                         final clients =
                             ref.watch(bidsStateProvider).clientListData?.data ??
                             [];
@@ -626,8 +626,8 @@ class _TruckLoadDetailsScreenState
                           isExpanded: true,
                           hint: Text(localizations.selectAClient),
                           value: dropdownValue,
-                          items: [
-                            DropdownMenuItem<client.Datum?>(
+                          items: [  
+                            DropdownMenuItem<client.Datum?>(   
                               value: null,
                               child: Text(localizations.selectAClient),
                             ),
@@ -641,7 +641,7 @@ class _TruckLoadDetailsScreenState
                               );
                             }),
                           ],
-                          onChanged: (client.Datum? newValue) {
+                          onChanged: (client.Datum? newValue) {   
                             ref
                                 .read(bidsStateProvider.notifier)
                                 .setClient(newValue);
@@ -676,7 +676,7 @@ class _TruckLoadDetailsScreenState
                             setState(() {
                               _bidAmountController.clear();
                             });
-                            if (NavigationService.isDialogShown) {
+                            if (NavigationService.isDialogShown) {  
                               NavigationService.goBack();
                             }
                           },
@@ -687,7 +687,7 @@ class _TruckLoadDetailsScreenState
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
+                          child: Text( 
                             localizations.cancel,
                             style: TextStyle(
                               color: Color(0xFF666666),
@@ -702,7 +702,7 @@ class _TruckLoadDetailsScreenState
                     Expanded(
                       child: SizedBox(
                         height: 48,
-                        child: ElevatedButton(
+                        child: ElevatedButton(  
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _submitBid();
@@ -715,9 +715,9 @@ class _TruckLoadDetailsScreenState
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
+                          child: Text(  
                             localizations.submitBid,
-                            style: TextStyle(
+                            style: TextStyle(   
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

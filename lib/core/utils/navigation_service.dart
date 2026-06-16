@@ -56,7 +56,7 @@ class NavigationService {
   }
 
   /// Hide loading overlay
-  static void hideLoading() {
+  static void hideLoading() {  
     if (!_isLoadingShown) return;
     _isLoadingShown = false;
     navigatorKey.currentState?.pop();
@@ -64,7 +64,7 @@ class NavigationService {
 
   /// Navigate to a named route
   static Future<dynamic>? navigateTo(String routeName, {Object? arguments}) {
-    return navigatorKey.currentState?.pushNamed(
+    return navigatorKey.currentState?.pushNamed(  
       routeName,
       arguments: arguments,
     );
@@ -96,7 +96,7 @@ class NavigationService {
     required Widget Function(BuildContext) builder,
     bool barrierDismissible = true,
     bool dismissLoadingFirst = false,
-  }) async {
+  }) async {  
     final ctx = context;
     if (ctx == null) {
       throw Exception('NavigationService: Context is not available');
@@ -116,18 +116,20 @@ class NavigationService {
 
     _isDialogShown = true;
 
-    return showDialog<T>(
-      context: ctx,
+    return showDialog<T>(  
+      context: ctx,  
       barrierDismissible: barrierDismissible,
       builder: builder,
-    ).then((value) {
+    ).then((value) { 
+       
       _isDialogShown = false;
       return value;
     });
   }
 
   /// Show a snackbar using the global context
-  static void showSnackBar(String message, {Duration? duration}) {
+  static void showSnackBar(String message, {Duration? duration}) { 
+
     final ctx = context;
     if (ctx == null) return;
 
@@ -143,7 +145,7 @@ class NavigationService {
     final ctx = context;
     if (ctx == null) return;
 
-    ScaffoldMessenger.of(ctx).showSnackBar(
+    ScaffoldMessenger.of(ctx).showSnackBar(    
       SnackBar(
         content: Text(message),
         backgroundColor: Theme.of(ctx).primaryColor,

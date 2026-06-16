@@ -6,14 +6,14 @@ class TradePowerStatementPage extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return Scaffold(  
+      appBar: AppBar(    
         title: const Text('Trade Power Statement'),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: const Center(
+      body: const Center( 
         child: Text('Trade Power Statement — UI coming soon'),
       ),
     );

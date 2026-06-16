@@ -18,7 +18,7 @@ class DeliveryCentersModel {
   DeliveryCentersModel({this.data, this.status, this.message});
 
   factory DeliveryCentersModel.fromJson(Map<dynamic, dynamic> json) =>
-      DeliveryCentersModel(
+      DeliveryCentersModel(  
         data: json["data"] == null
             ? []
             : List<DeliverCentersDatum>.from(
@@ -37,7 +37,7 @@ class DeliveryCentersModel {
   };
 }
 
-class DeliverCentersDatum {
+class DeliverCentersDatum {  
   dynamic id;
   dynamic warehouseName;
   dynamic warehouseAddress;
@@ -61,7 +61,7 @@ class DeliverCentersDatum {
   });
 
   factory DeliverCentersDatum.fromJson(Map<dynamic, dynamic> json) =>
-      DeliverCentersDatum(
+      DeliverCentersDatum(  
         id: json["id"],
         warehouseName: json["warehouse_name"],
         warehouseAddress: json["warehouse_address"],
@@ -74,7 +74,7 @@ class DeliverCentersDatum {
       );
 
   Map<dynamic, dynamic> toJson() => {
-    "id": id,
+    "id": id, 
     "warehouse_name": warehouseName,
     "warehouse_address": warehouseAddress,
     "labour_rate": labourRate,

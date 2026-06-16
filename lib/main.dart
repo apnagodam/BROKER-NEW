@@ -20,6 +20,7 @@ import 'package:ag_broker/presentation/features/truck_load/truck_load_details_sc
 import 'package:ag_broker/presentation/features/wallet/trade_power_statement.dart';
 import 'package:ag_broker/presentation/features/wallet/wallet_statement_page.dart';
 import 'package:ag_broker/presentation/features/wallet/withdrawal_request_page.dart';
+import 'package:ag_broker/presentation/marging/scheme_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -118,10 +119,6 @@ final GoRouter _router = GoRouter(
           builder: (context, state) => const AuthorisedPersonPage(),
         ),
         GoRoute(
-          path: 'lp-clients',
-          builder: (context, state) => const LpClientListPage(),
-        ),
-        GoRoute(
           path: 'tm-fees',
           builder: (context, state) => const TmFeesPage(),
         ),
@@ -129,6 +126,8 @@ final GoRouter _router = GoRouter(
           path: 'add-security',
           builder: (context, state) => const AddSecurityPage(),
         ),
+
+        // ── SBT Products ─────────────────────────────────────────────────
         GoRoute(
           path: 'sbt-secure-product',
           builder: (context, state) => const SbtSecureProductPage(),
@@ -137,10 +136,61 @@ final GoRouter _router = GoRouter(
           path: 'sbt-unsecure-product',
           builder: (context, state) => const SbtUnsecureProductPage(),
         ),
+
+        // ── Margin Funding ────────────────────────────────────────────────
+        GoRoute(
+          path: 'margin-funding-schemes',           // ✅ no leading slash, no /home/ prefix
+          builder: (context, state) => const MarginFundingSchemesPage(),
+        ),
+        GoRoute(
+          path: 'margin-funding-limit',             // ✅ same pattern
+          builder: (context, state) =>
+              const _PlaceholderPage(title: 'Margin Funding Limit'),
+        ),
+        GoRoute(
+          path: 'margin-funding-request',           // ✅ same pattern
+          builder: (context, state) =>
+              const _PlaceholderPage(title: 'Margin Funding Request'),
+        ),
       ],
     ),
   ],
 );
+
+// ── Temporary placeholder ─────────────────────────────────────────────────────
+class _PlaceholderPage extends StatelessWidget {
+  final String title;
+  const _PlaceholderPage({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.construction_outlined,
+                size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('Coming soon',
+                style:
+                    TextStyle(fontSize: 14, color: Colors.grey.shade600)),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});

@@ -308,7 +308,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        Text(  
                           localizations.withdrawalDetails,
                           style: const TextStyle(
                             fontSize: 20,
@@ -326,7 +326,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
                       ],
                     ),
                   ),
-                  IconButton(
+                  IconButton(  
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close),
                   ),
@@ -350,7 +350,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
               const SizedBox(height: 12),
 
               // Bank Details Section
-              Text(
+              Text(   
                 localizations.bankDetails,
                 style: const TextStyle(
                   fontSize: 16,
@@ -514,7 +514,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
     }
   }
 
-  String _formatAmount(String amount) {
+  String _formatAmount(String amount) {    
     try {
       final double value = double.parse(amount);
       final formatter = NumberFormat('#,##,##0.00', 'en_IN');
@@ -524,7 +524,7 @@ class _WithdrawalListPageState extends ConsumerState<WithdrawalListPage> {
     }
   }
 
-  String _formatDate(String dateStr) {
+  String _formatDate(String dateStr) {     
     try {
       final DateTime date = DateTime.parse(dateStr);
       return DateFormat('dd MMM yyyy, hh:mm a').format(date);

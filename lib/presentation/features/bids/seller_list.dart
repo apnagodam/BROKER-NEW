@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SellerList extends ConsumerWidget {
-  const SellerList({
+  const SellerList({  
     super.key,
     required this.data,
     required this.index,
@@ -29,22 +29,22 @@ class SellerList extends ConsumerWidget {
     final sellWeightController = TextEditingController();
     return Padding(
       padding: EdgeInsets.all(10),
-      child: Column(
-        children: [
+      child: Column(   
+        children: [     
           SizedBox(height: 10),
 
-          Row(
-            children: [
-              Expanded(
+          Row(    
+            children: [    
+              Expanded(    
                 child: Text(localizations.seller, textAlign: TextAlign.start),
               ),
-              Expanded(
-                child: Text(
-                  localizations.quantityQtl,
+              Expanded( 
+                child: Text(  
+                  localizations.quantityQtl,  
                   textAlign: TextAlign.start,
                 ),
               ),
-              Expanded(
+              Expanded(  
                 child: Text(localizations.rate, textAlign: TextAlign.start),
               ),
               Text(localizations.edit, textAlign: TextAlign.start),
@@ -53,49 +53,49 @@ class SellerList extends ConsumerWidget {
 
           Row(
             children: [
-              Expanded(
-                child: Text(
+              Expanded(  
+                child: Text(   
                   '${(data.userName ?? "").isEmpty ? "${localizations.seller} ${index + 1}" : data.userName}',
                   textAlign: TextAlign.start,
                 ),
               ),
-              Expanded(
+              Expanded(  
                 child: Text('${data.qty ?? "0.0"}', textAlign: TextAlign.start),
               ),
               Expanded(child: Text('${data.rate ?? "0.0"}')),
-              Visibility(
+              Visibility(  
                 maintainSize: true,
                 maintainAnimation: true,
                 maintainState: true,
                 visible: data.type.toString() == "1",
-                child: Align(
+                child: Align( 
                   alignment: Alignment.topRight,
-                  child: PopupMenuButton(
-                    itemBuilder: (ctx) => [
+                  child: PopupMenuButton(  
+                    itemBuilder: (ctx) => [    
                       PopupMenuItem(
-                        child: Row(
-                          children: [
-                            Icon(
+                        child: Row(  
+                          children: [  
+                            Icon(    
                               CupertinoIcons.pencil_circle_fill,
                               color: Theme.of(context).primaryColor,
                               size: 16,
                             ),
                             SizedBox(width: 10),
-                            Text(
+                            Text(        
                               localizations.edit,
-                              style: TextStyle(
+                              style: TextStyle(   
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
                           ],
                         ),
-                        onTap: () {
+                        onTap: () {    
                           sellPriceController.text = '${data.rate ?? "0.0"}';
                           sellWeightController.text = '${data.qty ?? "0.0"}';
-                          showModalBottomSheet(
+                          showModalBottomSheet(       
                             context: context,
-                            isScrollControlled: true,
+                            isScrollControlled: true, 
                             useSafeArea: true,
                             builder: (bottomsheetContext) => EditBidsScreen(
                               sbtData: null,
@@ -109,25 +109,25 @@ class SellerList extends ConsumerWidget {
                           );
                         },
                       ),
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            Icon(
+                      PopupMenuItem( 
+                        child: Row(    
+                          children: [  
+                            Icon(   
                               CupertinoIcons.delete,
                               color: Theme.of(context).primaryColor,
                               size: 16,
                             ),
                             SizedBox(width: 10),
-                            Text(
+                            Text(    
                               localizations.delete,
-                              style: TextStyle(
+                              style: TextStyle(  
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
                           ],
                         ),
-                        onTap: () async {
+                        onTap: () async {            
                           await ref
                               .watch(sbtStateProvider.notifier)
                               .deleteBids(productId, "${data.tradeId}");

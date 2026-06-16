@@ -80,7 +80,7 @@ class OrderDatum {
     "deal_type": dealType,
     "deal_status": dealStatus,
     "order_id": orderId,
-    "price": price,
+    "price": price, 
     "deal_qty": dealQty,
     "delaver_qty": delaverQty,
     "buyer_name": buyerName,

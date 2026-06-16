@@ -32,8 +32,8 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
   List<Datum>? clientsList;
 
   @override
-  void initState() {
-    super.initState();
+  void initState() {   
+    super.initState(); 
     _quantityController = TextEditingController(
       text: widget.initialQuantity ?? '',
     );
@@ -59,26 +59,26 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     return Scaffold(
-      body: SafeArea(
+      body: SafeArea(  
         child: Padding(
           padding: EdgeInsets.all(10),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
-              child: Column(
+              child: Column(  
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Header with back button
                   Row(
                     children: [
-                      IconButton(
+                      IconButton(  
                         icon: Icon(Icons.arrow_back),
                         onPressed: () => Navigator.pop(context),
                         tooltip: localizations.close,
                       ),
-                      Expanded(
-                        child: Text(
+                      Expanded(  
+                        child: Text(  
                           localizations.sell,
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -93,11 +93,11 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                   Divider(),
                   SizedBox(height: 10),
 
-                  SizedBox(
+                  SizedBox(  
                     width: double.infinity,
-                    child: Text(
+                    child: Text( 
                       localizations.product,
-                      style: TextStyle(
+                      style: TextStyle(  
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
@@ -106,14 +106,14 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Text(
+                  Text(  
                     "${widget.sbtData.commodity}(${widget.sbtData.district})",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Divider(color: Colors.grey),
 
                   SizedBox(height: 10),
-                  Text(
+                  Text(   
                     localizations.selectClient,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -127,7 +127,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton<Datum>(
+                      child: DropdownButton<Datum>( 
                         isExpanded: true,
                         hint: Text(localizations.selectAClient),
                         value: selectedClient,
@@ -141,7 +141,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                           );
                         }).toList(),
                         onChanged: (Datum? newValue) {
-                          setState(() {
+                          setState(() {  
                             selectedClient = newValue;
                           });
                         },
@@ -152,14 +152,14 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                   // Price TextField
                   Text(
                     localizations.priceQtl,
-                    style: TextStyle(
+                    style: TextStyle( 
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
                   ),
                   SizedBox(height: 8),
-                  TextFormField(
+                  TextFormField(    
                     controller: _priceController,
                     keyboardType: TextInputType.numberWithOptions(
                       decimal: false,
@@ -202,7 +202,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                         vertical: 16,
                       ),
                     ),
-                    validator: (value) {
+                    validator: (value) {   
                       if (value == null || value.isEmpty) {
                         return localizations.pleaseEnterPrice;
                       }
@@ -220,7 +220,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                   SizedBox(height: 10),
 
                   // Quantity TextField
-                  Text(
+                  Text(   
                     localizations.quantityQtl,
                     style: TextStyle(
                       color: Colors.black,
@@ -235,7 +235,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                       decimal: false,
                     ),
                     textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
+                    decoration: InputDecoration( 
                       hintText: localizations.enterQuantity,
                       prefixIcon: Icon(
                         Icons.inventory_2_outlined,
@@ -252,14 +252,14 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(  
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                           color: Theme.of(context).primaryColor,
                           width: 2,
                         ),
                       ),
-                      errorBorder: OutlineInputBorder(
+                      errorBorder: OutlineInputBorder(  
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(color: Colors.red, width: 1),
                       ),
@@ -272,7 +272,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                         vertical: 16,
                       ),
                     ),
-                    validator: (value) {
+                    validator: (value) {    
                       if (value == null || value.isEmpty) {
                         return localizations.pleaseEnterQuantity;
                       }
@@ -289,17 +289,17 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                   SizedBox(height: 16),
                   SizedBox(height: 10),
                   Center(
-                    child: Text(
+                    child: Text(   
                       localizations.termsAndConditions,
-                      style: TextStyle(
+                      style: TextStyle(   
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  Card(
+                  Card(   
                     color: Colors.grey.shade200,
-                    child: Padding(
+                    child: Padding(  
                       padding: EdgeInsets.all(10),
                       child: Text(termsText ?? ''),
                     ),
@@ -307,15 +307,15 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                   SizedBox(height: 20),
 
                   // Submit Button
-                  Consumer(
-                    builder: (context, ref, child) {
+                  Consumer(  
+                    builder: (context, ref, child) {  
                       final isLoading = ref.watch(sbtStateProvider).isLoading;
                       return SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child: ElevatedButton(   
                           onPressed: isLoading
                               ? null
-                              : () async {
+                              : () async {   
                                   if (_formKey.currentState!.validate()) {
                                     // Remove focus from text fields
                                     FocusScope.of(context).unfocus();
@@ -323,9 +323,9 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                                     if (selectedClient == null) {
                                       ScaffoldMessenger.of(
                                         context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
+                                      ).showSnackBar(  
+                                        SnackBar(  
+                                          content: Text(   
                                             localizations.pleaseSelectAClient,
                                           ),
                                           backgroundColor: Colors.red,
@@ -338,10 +338,10 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                                     final quantity = _quantityController.text;
                                     final price = _priceController.text;
 
-                                    try {
+                                    try {  
                                       await ref
                                           .read(sbtStateProvider.notifier)
-                                          .saveTrade(
+                                          .saveTrade(      
                                             productId: widget.sbtData.productId
                                                 .toString(),
                                             districtId: widget
@@ -357,15 +357,15 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                                             price: price,
                                             userId: "${selectedClient?.userId}",
                                           );
-                                    } catch (e) {
-                                      if (mounted) {
+                                    } catch (e) {  
+                                      if (mounted) {   
                                         ScaffoldMessenger.of(
                                           context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              AppLocalizations.of(
-                                                context,
+                                        ).showSnackBar( 
+                                          SnackBar( 
+                                            content: Text(  
+                                              AppLocalizations.of(  
+                                                context,   
                                               )!.failedToSubmitSellOrder(
                                                 e.toString(),
                                               ),
@@ -378,20 +378,20 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                                     }
                                   }
                                 },
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(    
                             backgroundColor: Theme.of(context).primaryColor,
                             padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
+                            shape: RoundedRectangleBorder(  
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 2,
                           ),
                           child: isLoading
-                              ? SizedBox(
+                              ? SizedBox(      
                                   height: 20,
                                   width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                                  child: CircularProgressIndicator(  
+                                    strokeWidth: 2,     
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       Colors.white,
                                     ),
@@ -399,7 +399,7 @@ class _SellBottomsheetState extends ConsumerState<SellBottomsheet> {
                                 )
                               : Text(
                                   localizations.submitOrder,
-                                  style: TextStyle(
+                                  style: TextStyle(  
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,

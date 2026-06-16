@@ -12,12 +12,16 @@ class TmUser {
   String get displayName => '$name ($phone)';
 }
 
-class DealTypeFee {
+class DealTypeFee {   
   final String dealType;
   double buyFee;
   double sellFee;
 
-  DealTypeFee({required this.dealType, required this.buyFee, required this.sellFee});
+  DealTypeFee({
+    required this.dealType,
+    required this.buyFee,
+    required this.sellFee,
+  });
 }
 
 class ExistingCommission {
@@ -46,26 +50,86 @@ const List<TmUser> _sampleUsers = [
 ];
 
 List<DealTypeFee> _defaultFees() => [
-      DealTypeFee(dealType: 'SBT Warehouse', buyFee: 1, sellFee: 1),
-      DealTypeFee(dealType: 'SBT Factory', buyFee: 1, sellFee: 1),
-      DealTypeFee(dealType: 'WBT Gatepass', buyFee: 0.50, sellFee: 0.50),
-      DealTypeFee(dealType: 'WBT Stack Sell', buyFee: 0.50, sellFee: 0.50),
-      DealTypeFee(dealType: 'F2f', buyFee: 0, sellFee: 0),
-      DealTypeFee(dealType: 'Spot', buyFee: 1, sellFee: 1),
-      DealTypeFee(dealType: 'Pots', buyFee: 0.50, sellFee: 0.50),
-    ];
+  DealTypeFee(dealType: 'SBT Warehouse', buyFee: 1, sellFee: 1),
+  DealTypeFee(dealType: 'SBT Factory', buyFee: 1, sellFee: 1),
+  DealTypeFee(dealType: 'WBT Gatepass', buyFee: 0.50, sellFee: 0.50),
+  DealTypeFee(dealType: 'WBT Stack Sell', buyFee: 0.50, sellFee: 0.50),
+  DealTypeFee(dealType: 'F2f', buyFee: 0, sellFee: 0),
+  DealTypeFee(dealType: 'Spot', buyFee: 1, sellFee: 1),
+  DealTypeFee(dealType: 'Pots', buyFee: 0.50, sellFee: 0.50),
+];
 
 const List<ExistingCommission> _existingCommissions = [
-  ExistingCommission(sNo: 29, user: 'Anurag Traders (7488353866)', dealType: 'Pots', buyCommission: 0.50, sellCommission: 0),
-  ExistingCommission(sNo: 30, user: 'Anurag Traders (7488353866)', dealType: 'Spot', buyCommission: 1, sellCommission: 0),
-  ExistingCommission(sNo: 31, user: 'Anurag Traders (7488353866)', dealType: 'F2f', buyCommission: 0, sellCommission: 0),
-  ExistingCommission(sNo: 32, user: 'Anurag Traders (7488353866)', dealType: 'WBT Stack Sell', buyCommission: 0.50, sellCommission: 0),
-  ExistingCommission(sNo: 33, user: 'Anurag Traders (7488353866)', dealType: 'WBT Gatepass', buyCommission: 0.50, sellCommission: 0),
-  ExistingCommission(sNo: 34, user: 'Anurag Traders (7488353866)', dealType: 'SBT Factory', buyCommission: 1, sellCommission: 0),
-  ExistingCommission(sNo: 35, user: 'Anurag Traders (7488353866)', dealType: 'SBT Warehouse', buyCommission: 1, sellCommission: 0),
-  ExistingCommission(sNo: 8, user: 'Deepak Trading (9570675930)', dealType: 'WBT Gatepass', buyCommission: 0.50, sellCommission: 0.50),
-  ExistingCommission(sNo: 9, user: 'Deepak Trading (9570675930)', dealType: 'SBT Warehouse', buyCommission: 1, sellCommission: 0.5),
-  ExistingCommission(sNo: 10, user: 'Deepak Trading (9570675930)', dealType: 'SBT Factory', buyCommission: 1, sellCommission: 0.5),
+  ExistingCommission(
+    sNo: 29,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'Pots',
+    buyCommission: 0.50,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 30,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'Spot',
+    buyCommission: 1,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 31,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'F2f',
+    buyCommission: 0,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 32,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'WBT Stack Sell',
+    buyCommission: 0.50,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 33,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'WBT Gatepass',
+    buyCommission: 0.50,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 34,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'SBT Factory',
+    buyCommission: 1,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 35,
+    user: 'Anurag Traders (7488353866)',
+    dealType: 'SBT Warehouse',
+    buyCommission: 1,
+    sellCommission: 0,
+  ),
+  ExistingCommission(
+    sNo: 8,
+    user: 'Deepak Trading (9570675930)',
+    dealType: 'WBT Gatepass',
+    buyCommission: 0.50,
+    sellCommission: 0.50,
+  ),
+  ExistingCommission(
+    sNo: 9,
+    user: 'Deepak Trading (9570675930)',
+    dealType: 'SBT Warehouse',
+    buyCommission: 1,
+    sellCommission: 0.5,
+  ),
+  ExistingCommission(
+    sNo: 10,
+    user: 'Deepak Trading (9570675930)',
+    dealType: 'SBT Factory',
+    buyCommission: 1,
+    sellCommission: 0.5,
+  ),
 ];
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
@@ -122,9 +186,12 @@ class _TmFeesPageState extends State<TmFeesPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        title: const Text('TM Client Fees', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: const Text(
+          'TM Client Fees',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
         centerTitle: true,
-         backgroundColor: primary,
+        backgroundColor: primary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -136,9 +203,19 @@ class _TmFeesPageState extends State<TmFeesPage> {
             children: const [
               Icon(Icons.home_outlined, size: 13, color: Color(0xFF26C6C6)),
               SizedBox(width: 4),
-              Text('Home', style: TextStyle(fontSize: 12, color: Color(0xFF26C6C6))),
+              Text(
+                'Home',
+                style: TextStyle(fontSize: 12, color: Color(0xFF26C6C6)),
+              ),
               Text(' / ', style: TextStyle(fontSize: 12, color: Colors.grey)),
-              Text('TM Client Fees', style: TextStyle(fontSize: 12, color: Color(0xFF26C6C6), fontWeight: FontWeight.w600)),
+              Text(
+                'TM Client Fees',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF26C6C6),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -163,7 +240,11 @@ class _TmFeesPageState extends State<TmFeesPage> {
                   const SizedBox(height: 12),
                   const Text(
                     'User Wise TM Fees',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF333333)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Color(0xFF333333),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   _FeesTable(fees: _fees),
@@ -179,10 +260,18 @@ class _TmFeesPageState extends State<TmFeesPage> {
                       backgroundColor: primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       elevation: 0,
                     ),
-                    child: const Text('Submit', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -221,7 +310,11 @@ class _SectionCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -235,7 +328,11 @@ class _SectionCard extends StatelessWidget {
             ),
             child: Text(
               title,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF333333),
+              ),
             ),
           ),
           Padding(padding: const EdgeInsets.all(16), child: child),
@@ -252,17 +349,26 @@ class _UserDropdown extends StatelessWidget {
   final TmUser? selectedUser;
   final ValueChanged<TmUser> onSelected;
 
-  const _UserDropdown({required this.users, required this.selectedUser, required this.onSelected});
+  const _UserDropdown({
+    required this.users,
+    required this.selectedUser,
+    required this.onSelected,
+  });
 
   void _showPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => _UserPickerSheet(users: users, onSelected: (u) {
-        Navigator.pop(context);
-        onSelected(u);
-      }),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _UserPickerSheet(
+        users: users,
+        onSelected: (u) {
+          Navigator.pop(context);
+          onSelected(u);
+        },
+      ),
     );
   }
 
@@ -273,8 +379,14 @@ class _UserDropdown extends StatelessWidget {
       children: [
         Row(
           children: const [
-            Text('Users', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-            Text(' *', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            Text(
+              'Users',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -295,7 +407,9 @@ class _UserDropdown extends StatelessWidget {
                     selectedUser?.displayName ?? 'Select User',
                     style: TextStyle(
                       fontSize: 14,
-                      color: selectedUser != null ? const Color(0xFF333333) : Colors.grey,
+                      color: selectedUser != null
+                          ? const Color(0xFF333333)
+                          : Colors.grey,
                     ),
                   ),
                 ),
@@ -332,7 +446,11 @@ class _UserPickerSheetState extends State<_UserPickerSheet> {
     _ctrl.addListener(() {
       setState(() {
         _filtered = widget.users
-            .where((u) => u.displayName.toLowerCase().contains(_ctrl.text.toLowerCase()))
+            .where(
+              (u) => u.displayName.toLowerCase().contains(
+                _ctrl.text.toLowerCase(),
+              ),
+            )
             .toList();
       });
     });
@@ -341,7 +459,9 @@ class _UserPickerSheetState extends State<_UserPickerSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         child: Column(
@@ -349,14 +469,21 @@ class _UserPickerSheetState extends State<_UserPickerSheet> {
           children: [
             Center(
               child: Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2)),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 12),
             const Align(
               alignment: Alignment.centerLeft,
-              child: Text('Select User', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text(
+                'Select User',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -367,7 +494,10 @@ class _UserPickerSheetState extends State<_UserPickerSheet> {
                 filled: true,
                 fillColor: const Color(0xFFF4F6FA),
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -380,11 +510,28 @@ class _UserPickerSheetState extends State<_UserPickerSheet> {
                   final u = _filtered[i];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: const Color(0xFF26C6C6).withValues(alpha: 0.15),
-                      child: Text(u.name[0], style: const TextStyle(color: Color(0xFF26C6C6), fontWeight: FontWeight.bold)),
+                      backgroundColor: const Color(
+                        0xFF26C6C6,
+                      ).withValues(alpha: 0.15),
+                      child: Text(
+                        u.name[0],
+                        style: const TextStyle(
+                          color: Color(0xFF26C6C6),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    title: Text(u.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                    subtitle: Text(u.phone, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    title: Text(
+                      u.name,
+                      style: const TextStyle( 
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    subtitle: Text(
+                      u.phone,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                     onTap: () => widget.onSelected(u),
                   );
                 },
@@ -410,22 +557,56 @@ class _FeesTable extends StatefulWidget {
 
 class _FeesTableState extends State<_FeesTable> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {   
     return Column(
       children: [
         // Header
-        Container(
+        Container(  
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
+          decoration: BoxDecoration(   
             color: const Color(0xFFF0FAFA),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFF26C6C6).withValues(alpha: 0.3)),
+            border: Border.all(
+              color: const Color(0xFF26C6C6).withValues(alpha: 0.3),
+            ),
           ),
           child: const Row(
             children: [
-              Expanded(flex: 3, child: Text('Deal Type', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF555555)))),
-              Expanded(flex: 2, child: Text('Buy Fee (%)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF555555)), textAlign: TextAlign.center)),
-              Expanded(flex: 2, child: Text('Sell Fee (%)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF555555)), textAlign: TextAlign.center)),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'Deal Type',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: Color(0xFF555555),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  'Buy Fee (%)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: Color(0xFF555555),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text( 
+                  'Sell Fee (%)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: Color(0xFF555555),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ],
           ),
         ),
@@ -445,7 +626,13 @@ class _FeesTableState extends State<_FeesTable> {
               children: [
                 Expanded(
                   flex: 3,
-                  child: Text(fee.dealType, style: const TextStyle(fontSize: 13, color: Color(0xFF333333))),
+                  child: Text(
+                    fee.dealType,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
                 ),
                 Expanded(
                   flex: 2,
@@ -487,9 +674,11 @@ class _FeeInputState extends State<_FeeInput> {
   @override
   void initState() {
     super.initState();
-    _ctrl = TextEditingController(text: widget.value == widget.value.truncateToDouble()
-        ? widget.value.toInt().toString()
-        : widget.value.toString());
+    _ctrl = TextEditingController(
+      text: widget.value == widget.value.truncateToDouble()
+          ? widget.value.toInt().toString()
+          : widget.value.toString(),
+    );
   }
 
   @override
@@ -558,7 +747,10 @@ class _ExistingCommissionSection extends StatelessWidget {
             filled: true,
             fillColor: const Color(0xFFF4F6FA),
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
         const SizedBox(height: 4),
@@ -569,7 +761,12 @@ class _ExistingCommissionSection extends StatelessWidget {
         const SizedBox(height: 12),
 
         if (commissions.isEmpty)
-          const Center(child: Text('No records found.', style: TextStyle(color: Colors.grey)))
+          const Center(
+            child: Text(
+              'No records found.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          )
         else
           ...commissions.map((c) => _CommissionCard(commission: c)),
       ],
@@ -590,7 +787,9 @@ class _CommissionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF9FFFE),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF26C6C6).withValues(alpha: 0.2)),
+        border: Border.all(
+          color: const Color(0xFF26C6C6).withValues(alpha: 0.2),
+        ),
       ),
       child: Row(
         children: [
@@ -605,7 +804,11 @@ class _CommissionCard extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               '${commission.sNo}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF26C6C6)),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Color(0xFF26C6C6),
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -613,15 +816,32 @@ class _CommissionCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(commission.user, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF333333))),
+                Text(
+                  commission.user,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: Color(0xFF333333),
+                  ),
+                ),
                 const SizedBox(height: 2),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE0F7FA),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(commission.dealType, style: const TextStyle(fontSize: 11, color: Color(0xFF00838F), fontWeight: FontWeight.w500)),
+                  child: Text(
+                    commission.dealType,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFF00838F),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -629,9 +849,17 @@ class _CommissionCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _CommBadge(label: 'Buy', value: commission.buyCommission, color: const Color(0xFF2E7D32)),
+              _CommBadge(
+                label: 'Buy',
+                value: commission.buyCommission,
+                color: const Color(0xFF2E7D32),
+              ),
               const SizedBox(height: 4),
-              _CommBadge(label: 'Sell', value: commission.sellCommission, color: const Color(0xFFE65100)),
+              _CommBadge(
+                label: 'Sell',
+                value: commission.sellCommission,
+                color: const Color(0xFFE65100),
+              ),
             ],
           ),
         ],
@@ -645,14 +873,21 @@ class _CommBadge extends StatelessWidget {
   final double value;
   final Color color;
 
-  const _CommBadge({required this.label, required this.value, required this.color});
+  const _CommBadge({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('$label: ', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+        Text(   
+          '$label: ',
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+        ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
           decoration: BoxDecoration(
@@ -661,7 +896,11 @@ class _CommBadge extends StatelessWidget {
           ),
           child: Text(
             '$value%',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
+            style: TextStyle(  
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ),
       ],

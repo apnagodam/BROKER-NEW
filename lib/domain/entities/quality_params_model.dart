@@ -78,7 +78,7 @@ class QualityDatum {
   );
 
   Map<dynamic, dynamic> toJson() => {
-    "id": id,
+    "id": id,  
     "producr_id": producrId,
     "commodity_id": commodityId,
     "parameter_id": parameterId,
@@ -118,7 +118,7 @@ class Parameters {
     "id": id,
     "parameter": parameter,
     "status": status,
-    "created_at": createdAt,
+    "created_at": createdAt, 
     "updated_at": updatedAt,
   };
 }

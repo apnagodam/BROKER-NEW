@@ -12,7 +12,7 @@ class AudioWidget extends ConsumerStatefulWidget {
 }
 
 class _AudioWidgetState extends ConsumerState<AudioWidget>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin {   
   bool _isAnimating = false;
   bool _isExpanded = false;
   late final AnimationController _controller;
@@ -48,7 +48,7 @@ void initState() {
 }
 
   @override
-  void dispose() {
+  void dispose() { 
     _controller.dispose();
     _expandController.dispose();
     // Don't forget to dispose when done
@@ -57,7 +57,7 @@ void initState() {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final isSmallScreen = width < 360;
@@ -78,7 +78,7 @@ void initState() {
       children: [
         // Main content when expanded
         if (_isExpanded)
-          AnimatedBuilder(
+          AnimatedBuilder(  
             animation: _expandAnimation,
             builder: (context, child) {
               return Opacity(

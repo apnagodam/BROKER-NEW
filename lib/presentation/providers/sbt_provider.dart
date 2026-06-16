@@ -48,7 +48,7 @@ class SbtState {
   SbtState copyWith({
     bool? isLoading,
     bool? isDeliveryLoading,
-    bool? isMatchedOrdersLoading,
+    bool? isMatchedOrdersLoading, 
     String? error,
     bool? isAuthenticated,
     SbtProductResponse? sbtProductData,
@@ -75,7 +75,7 @@ class SbtNotifier extends Notifier<SbtState> {
   SbtRepository get repository => ref.read(sbtRepositoryProvider);
 
   @override
-  SbtState build() {
+  SbtState build() {  
     return SbtState();
   }
 
@@ -92,7 +92,7 @@ class SbtNotifier extends Notifier<SbtState> {
     }
   }
 
-  Future<void> saveTrade({
+  Future<void> saveTrade({  
     required String productId,
     required String districtId,
     required String commodity,
@@ -103,7 +103,7 @@ class SbtNotifier extends Notifier<SbtState> {
   }) async {
     try {
       NavigationService.showLoading();
-      final response = await repository.saveTrade(
+      final response = await repository.saveTrade(   
         productId,
         districtId,
         commodity,
@@ -125,20 +125,20 @@ class SbtNotifier extends Notifier<SbtState> {
             ? NavigationService.hideLoading()
             : null;
 
-        if (NavigationService.context!.mounted) {
+        if (NavigationService.context!.mounted) {    
           Navigator.of(NavigationService.context!).pop();
         }
       } else {
         NavigationService.hideLoading();
         NavigationService.showDialogGlobal(
-          builder: (dialogContext) {
+          builder: (dialogContext) {  
             final localizations = AppLocalizations.of(dialogContext)!;
             return AlertDialog(
               title: Text(localizations.errorOccurred),
               content: Text(response['message'] ?? localizations.errorOccurred),
               actions: [
-                TextButton(
-                  onPressed: () {
+                TextButton(  
+                  onPressed: () {  
                     Navigator.of(dialogContext).pop();
                   },
                   child: Text(localizations.ok),
@@ -155,7 +155,7 @@ class SbtNotifier extends Notifier<SbtState> {
   }
 
   Future<void> deleteBids(String productId, String tradeId) async {
-    try {
+    try {  
       NavigationService.showLoading();
       var response = await repository.deleteBid(tradeId).onError((e, s) {
         NavigationService.hideLoading();
@@ -187,8 +187,8 @@ class SbtNotifier extends Notifier<SbtState> {
         isDeliveryLoading: false,
         deliveryCentersData: deliveryCenters,
       );
-    } catch (e) {
-      state = state.copyWith(
+    } catch (e) {  
+      state = state.copyWith( 
         isDeliveryLoading: false,
         error: 'Failed to fetch delivery centers: $e',
       );
@@ -202,7 +202,7 @@ class SbtNotifier extends Notifier<SbtState> {
     } catch (e) {}
   }
 
-  Future<void> editBid({
+  Future<void> editBid({  
     String? productId,
     String? districtId,
     String? commodity,
@@ -238,14 +238,14 @@ class SbtNotifier extends Notifier<SbtState> {
         state = state.copyWith(error: response['message'] ?? 'Error occurred');
         NavigationService.showDialogGlobal(
           dismissLoadingFirst: true,
-          builder: (dialogContext) {
+          builder: (dialogContext) { 
             final localizations = AppLocalizations.of(dialogContext)!;
-            return AlertDialog(
+            return AlertDialog( 
               title: Text(localizations.errorOccurred),
               content: Text(response['message'] ?? localizations.errorOccurred),
               actions: [
-                TextButton(
-                  onPressed: () {
+                TextButton(  
+                  onPressed: () {   
                     Navigator.of(dialogContext).pop();
                   },
                   child: Text(localizations.ok),

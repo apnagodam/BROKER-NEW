@@ -26,7 +26,7 @@ class ClientListModel {
             : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
       );
 
-  Map<dynamic, dynamic> toJson() => {
+  Map<dynamic, dynamic> toJson() => {   
     "status": status,
     "message": message,
     "data": data == null
@@ -35,7 +35,7 @@ class ClientListModel {
   };
 }
 
-class Datum {
+class Datum {    
   dynamic userId;
   dynamic name;
   dynamic phone;

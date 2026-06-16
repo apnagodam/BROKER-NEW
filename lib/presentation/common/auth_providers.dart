@@ -76,7 +76,7 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       var response = await repository.getBrokerage();
       if (response['status'].toString() == "1") {
-        state = state.copyWith(
+        state = state.copyWith(  
           isBrokerageLoading: false,
           brokerageResponse: response,
         );
@@ -137,7 +137,7 @@ class AuthNotifier extends Notifier<AuthState> {
         );
       } else if (response['status'].toString() == "3") {
         // Partial login - OTP verified but additional info needed
-        state = state.copyWith(
+        state = state.copyWith(  
           isLoading: false,
           response: response,
           isAuthenticated: false,
@@ -169,7 +169,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isUserDetailsLoading: false,
         userDetails: userDetails,
       );
-    } catch (e) {
+    } catch (e) { 
       state = state.copyWith(
         isUserDetailsLoading: false,
         error: e.toString(),
@@ -178,7 +178,7 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout() async {  
     await SharedPreferencesService.clearAuthData();
     state = AuthState(); // Reset to initial state
   }

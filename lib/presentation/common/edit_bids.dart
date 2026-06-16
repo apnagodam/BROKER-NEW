@@ -53,7 +53,7 @@ class _EditBidsScreenState extends ConsumerState<EditBidsScreen> {
       if (widget.sbtData != null) {
         _quantityController.text = widget.sbtData!.qty.toString();
         _priceController.text = widget.sbtData!.rate.toString();
-      } else if (widget.sbtSellData != null) {
+      } else if (widget.sbtSellData != null) {  
         _quantityController.text = widget.sbtSellData!.qty.toString();
         _priceController.text = widget.sbtSellData!.rate.toString();
       }

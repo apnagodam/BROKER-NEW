@@ -40,8 +40,8 @@ class ErrorLayout extends StatelessWidget {
 
             // Error Title
             if (title != null) ...[
-              Text(
-                title!,
+              Text(  
+                title!, 
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.error,
@@ -63,7 +63,7 @@ class ErrorLayout extends StatelessWidget {
 
             // Retry Button
             if (onRetry != null)
-              ElevatedButton.icon(
+              ElevatedButton.icon(  
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
                 label: Text(
@@ -91,7 +91,7 @@ class CompactErrorWidget extends StatelessWidget {
   const CompactErrorWidget({super.key, required this.message, this.onRetry});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     final theme = Theme.of(context);
 
     return Container(
@@ -147,7 +147,7 @@ class ErrorDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     final theme = Theme.of(context);
 
     return AlertDialog(
@@ -180,7 +180,7 @@ class ErrorDialog extends StatelessWidget {
     String? closeButtonText,
     String? retryButtonText,
   }) {
-    return showDialog(
+    return showDialog(  
       context: context,
       builder: (context) => ErrorDialog(
         title: title,
@@ -194,13 +194,13 @@ class ErrorDialog extends StatelessWidget {
 }
 
 /// Network error specific layout
-class NetworkErrorLayout extends StatelessWidget {
+class NetworkErrorLayout extends StatelessWidget { 
   final VoidCallback? onRetry;
 
   const NetworkErrorLayout({super.key, this.onRetry});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     final localizations = AppLocalizations.of(context)!;
     return ErrorLayout(
       title: localizations.noInternetConnection,
@@ -220,7 +220,7 @@ class ServerErrorLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    return ErrorLayout(
+    return ErrorLayout(  
       title: localizations.serverError,
       message: localizations.serverErrorMessage,
       icon: Icons.cloud_off,
@@ -230,7 +230,7 @@ class ServerErrorLayout extends StatelessWidget {
 }
 
 /// Helper function to get user-friendly error messages from DioException
-String getErrorMessage(dynamic error, BuildContext context) {
+String getErrorMessage(dynamic error, BuildContext context) {  
   final localizations = AppLocalizations.of(context)!;
 
   if (error == null) return localizations.unexpectedError;
@@ -243,15 +243,15 @@ String getErrorMessage(dynamic error, BuildContext context) {
     return localizations.networkError;
   }
 
-  if (errorString.contains('timeout')) {
+  if (errorString.contains('timeout')) { 
     return localizations.requestTimeout;
   }
 
-  if (errorString.contains('500')) {
+  if (errorString.contains('500')) {    
     return localizations.serverErrorMessage;
   }
 
-  if (errorString.contains('404')) {
+  if (errorString.contains('404')) {  
     return localizations.resourceNotFound;
   }
 

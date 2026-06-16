@@ -86,39 +86,39 @@ class BuyerList extends ConsumerWidget {
                 maintainAnimation: true,
                 maintainState: true,
                 visible: data?.type.toString() == "1",
-                child: Align(
+                child: Align(  
                   alignment: Alignment.topRight,
                   child: PopupMenuButton(
                     itemBuilder: (context) => [
                       PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(
+                            Icon( 
                               CupertinoIcons.pencil_circle_fill,
                               color: Theme.of(context).primaryColor,
                               size: 16,
                             ),
                             SizedBox(width: 10),
-                            Text(
+                            Text(  
                               localizations.edit,
-                              style: TextStyle(
+                              style: TextStyle(  
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
                           ],
                         ),
-                        onTap: () async {
+                        onTap: () async {  
                           buyPriceController.text = '${data?.rate ?? "0.0"}';
                           buyWeightController.text = '${data?.qty ?? "0.0"}';
 
-                          showModalBottomSheet(
+                          showModalBottomSheet(  
                             context: context,
                             useSafeArea: true,
                             isScrollControlled: true,
                             enableDrag: true,
-                            builder: (context) {
-                              return EditBidsScreen(
+                            builder: (context) {    
+                              return EditBidsScreen(  
                                 sbtData: data,
                                 sbtSellData: null,
                                 productId: productId,
@@ -132,24 +132,24 @@ class BuyerList extends ConsumerWidget {
                         },
                       ),
                       PopupMenuItem(
-                        child: Row(
-                          children: [
+                        child: Row(  
+                          children: [    
                             Icon(
                               CupertinoIcons.delete,
                               color: Theme.of(context).primaryColor,
                               size: 16,
                             ),
                             SizedBox(width: 10),
-                            Text(
+                            Text(   
                               localizations.delete,
-                              style: TextStyle(
+                              style: TextStyle(  
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
                           ],
                         ),
-                        onTap: () async {
+                        onTap: () async {   
                           await ref
                               .read(sbtStateProvider.notifier)
                               .deleteBids(productId, "${data?.tradeId}");

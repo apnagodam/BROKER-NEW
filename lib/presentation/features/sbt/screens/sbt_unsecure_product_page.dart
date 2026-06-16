@@ -154,7 +154,7 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
           // Breadcrumb
           Container(
             width: double.infinity,
-            color: const Color(0xFF7B3F00).withOpacity(0.08),
+            color: const Color(0xFF7B3F00).withValues(alpha: 0.08),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: const [
@@ -620,7 +620,7 @@ class _LabelValue extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-              Text(
+              Text( 
                 value,
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF333333)),
               ),
@@ -649,7 +649,7 @@ class _CircuitBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container( 
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: color,
@@ -693,9 +693,9 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container(  
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: BoxDecoration( 
         color: highlight ? const Color(0xFFFFF8E1) : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(8),
         border: highlight ? Border.all(color: const Color(0xFFFFCC02), width: 1) : null,
@@ -706,9 +706,9 @@ class _InfoTile extends StatelessWidget {
           Icon(icon, size: 13, color: const Color(0xFF7B3F00)),
           const SizedBox(height: 3),
           Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey)),
-          Text(
-            value,
-            style: TextStyle(
+          Text( 
+            value, 
+            style: TextStyle(  
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: highlight ? const Color(0xFFE65100) : const Color(0xFF333333),

@@ -108,14 +108,14 @@ class _SbtSecureProductPageState extends State<SbtSecureProductPage> {
   List<SbtSecureProduct> _filtered = _sampleProducts;
 
   @override
-  void initState() {
+  void initState() {  
     super.initState();
     _searchController.addListener(_onSearch);
   }
 
   void _onSearch() {
     final query = _searchController.text.toLowerCase();
-    setState(() {
+    setState(() {  
       _filtered = _sampleProducts.where((p) {
         return p.commodity.toLowerCase().contains(query) ||
             p.district.toLowerCase().contains(query);
@@ -260,7 +260,7 @@ class _ProductCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: Column( 
         children: [
           // Card Header
           Container(
@@ -271,13 +271,13 @@ class _ProductCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
+                Container(  
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Text(
+                  child: Text(  
                     '#${product.srNo}',
                     style: const TextStyle(
                       color: Colors.white,
@@ -287,8 +287,8 @@ class _ProductCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
+                Expanded(  
+                  child: Text(  
                     product.commodity,
                     style: const TextStyle(
                       color: Colors.white,
@@ -297,11 +297,11 @@ class _ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Row(
-                  children: [
+                Row(  
+                  children: [    
                     const Icon(Icons.location_on_outlined, color: Colors.white70, size: 14),
                     const SizedBox(width: 3),
-                    Text(
+                    Text(  
                       product.district,
                       style: const TextStyle(color: Colors.white70, fontSize: 13),
                     ),
@@ -312,12 +312,12 @@ class _ProductCard extends StatelessWidget {
           ),
 
           // Circuit prices
-          Padding(
+          Padding(   
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Row(
-              children: [
-                Expanded(
-                  child: _CircuitBox(
+              children: [  
+                Expanded(  
+                  child: _CircuitBox(   
                     label: 'Lower Circuit',
                     value: '₹${product.lowerCircuit.toInt()}/QTL',
                     color: const Color(0xFFE8F5E9),
@@ -326,8 +326,8 @@ class _ProductCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: _CircuitBox(
+                Expanded(   
+                  child: _CircuitBox(  
                     label: 'Upper Circuit',
                     value: '₹${product.upperCircuit.toInt()}/QTL',
                     color: const Color(0xFFFFF3E0),
@@ -342,28 +342,28 @@ class _ProductCard extends StatelessWidget {
           // Details grid
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-            child: Column(
-              children: [
-                Row(
+            child: Column(   
+              children: [  
+                Row(   
                   children: [
-                    Expanded(
-                      child: _InfoTile(
+                    Expanded(  
+                      child: _InfoTile(  
                         icon: Icons.inventory_2_outlined,
                         label: 'Qty Limit',
                         value: '${product.quantityLimit.toInt()} QTL',
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: _InfoTile(
+                    Expanded(  
+                      child: _InfoTile(  
                         icon: Icons.local_shipping_outlined,
                         label: 'Delivery',
                         value: '${product.deliveryDays} Days',
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: _InfoTile(
+                    Expanded(   
+                      child: _InfoTile(   
                         icon: Icons.calendar_today_outlined,
                         label: 'Expiry',
                         value: product.expiryDate,
@@ -373,9 +373,9 @@ class _ProductCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  children: [
-                    Expanded(
-                      child: _InfoTile(
+                  children: [     
+                    Expanded(   
+                      child: _InfoTile(  
                         icon: Icons.gavel_outlined,
                         label: 'Penalty',
                         value: '${product.penalty.toInt()}%',
@@ -383,7 +383,7 @@ class _ProductCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Expanded(
+                    Expanded(  
                       child: _InfoTile(
                         icon: Icons.store_outlined,
                         label: 'Seller Margin',
@@ -392,7 +392,7 @@ class _ProductCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: _InfoTile(
+                      child: _InfoTile(    
                         icon: Icons.shopping_cart_outlined,
                         label: 'Buyer Margin',
                         value: '${product.buyerMargin.toInt()}%',
@@ -416,7 +416,7 @@ class _CircuitBox extends StatelessWidget {
   final Color textColor;
   final IconData icon;
 
-  const _CircuitBox({
+  const _CircuitBox({   
     required this.label,
     required this.value,
     required this.color,
@@ -426,7 +426,7 @@ class _CircuitBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container(  
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: color,
