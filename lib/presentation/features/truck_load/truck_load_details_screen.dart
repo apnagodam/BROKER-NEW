@@ -1,5 +1,6 @@
+import 'package:ag_broker/domain/entities/running_deal_model.dart';
+import 'package:ag_broker/domain/entities/stack_sell_list_model.dart';
 import 'package:ag_broker/core/utils/navigation_service.dart';
-import 'package:ag_broker/core/utils/shared_preferences_service.dart';
 import 'package:ag_broker/domain/entities/client_list_model.dart' as client;
 import 'package:ag_broker/l10n/app_localizations.dart';
 import 'package:ag_broker/presentation/providers/bids_provider.dart';
@@ -7,6 +8,7 @@ import 'package:ag_broker/presentation/providers/stack_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:go_router/go_router.dart';
 
 class TruckLoadDetailsScreen extends ConsumerStatefulWidget {
   final int index;
@@ -26,11 +28,6 @@ class _TruckLoadDetailsScreenState
   @override
   void dispose() {
     _bidAmountController.dispose();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        ref.watch(stackStateProvider.notifier).fetchStackSellList();
-      }
-    });
     super.dispose();
   }
 
@@ -38,8 +35,9 @@ class _TruckLoadDetailsScreenState
   void initState() {
     // Cache the data once - use ref.read to avoid rebuilds
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.watch(bidsStateProvider.notifier).fetchClientList();
-      clientsList = ref.watch(bidsStateProvider).clientListData?.data ?? [];
+      await ref.read(bidsStateProvider.notifier).fetchClientList();
+      clientsList = ref.read(bidsStateProvider).clientListData?.data ?? [];
+      ref.read(stackStateProvider.notifier).fetchRunningDeals();
     });
     super.initState();
   }
@@ -47,479 +45,338 @@ class _TruckLoadDetailsScreenState
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final stackData =
+        ref.watch(stackStateProvider).stackSellData?.data?[widget.index];
+
+    final headerTitle = stackData != null
+        ? "${stackData.commodityName} (${stackData.warehouseName} ( Stack No.${stackData.stackNumber} )${stackData.deliveryDays != null ? ' , Manda Delivery Days :- ${stackData.deliveryDays}' : ''})- ${stackData.warehouseName} ( Stack No.${stackData.stackNumber} )${stackData.deliveryDays != null ? ' , Manda Delivery Days :- ${stackData.deliveryDays}' : ''}"
+        : "";
 
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          localizations.stackSellBidding,
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Color(0xFF2E7D32),
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
       ),
       body: RefreshIndicator(
-        child: SingleChildScrollView(  
+        onRefresh: () =>
+            ref.watch(stackStateProvider.notifier).fetchStackSellList(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Main Stack Details Card
-                Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF2E7D32),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Stack Number Header
-                        Text(
-                          '${localizations.stackNo} - ${ref.watch(stackStateProvider).stackSellData?.data?[widget.index].stackNumber ?? ''}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-
-                        // Divider Line
-                        Container(height: 2, color: Colors.white),
-                        SizedBox(height: 16),
-
-                        // Terminal Name
-                        Text(
-                          localizations.terminalName(
-                            ref
-                                    .watch(stackStateProvider)
-                                    .stackSellData
-                                    ?.data?[widget.index]
-                                    .warehouseName ??
-                                '',
-                          ),
-                          style: TextStyle(  
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 12),
-
-                        // Divider
-                        Container(height: 1, color: Colors.white),
-                        SizedBox(height: 16),
-
-                        // Commodity
-                        Text(
-                          localizations.commodityLabel(
-                            ref
-                                    .watch(stackStateProvider)
-                                    .stackSellData
-                                    ?.data?[widget.index]
-                                    .commodityName ??
-                                '',
-                          ),
-                          style: TextStyle(   
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 12),
-
-                        // Divider
-                        Container(height: 1, color: Colors.white),
-                        SizedBox(height: 16),
-
-                        // Warehouse Address
-                        Text(
-                          localizations.warehouseAddress(
-                            ref
-                                    .watch(stackStateProvider)
-                                    .stackSellData
-                                    ?.data?[widget.index]
-                                    .warehouseAddress ??
-                                '',
-                          ),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 12),
-
-                        // Divider
-                        Container(height: 1, color: Colors.white),
-                        SizedBox(height: 16),
-
-                        // Quantity and Seller Price Row
-                        Row(
-                          children: [
-                            // Quantity
-                            Expanded(
-                              child: Text(
-                                '${localizations.quantityQtl} : ${ref.watch(stackStateProvider).stackSellData?.data?[widget.index].quantity}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-
-                            // Vertical Divider
-                            Container(  
-                              width: 2,
-                              height: 40,
-                              color: Colors.white,
-                              margin: EdgeInsets.symmetric(horizontal: 16),
-                            ),
-
-                            // Seller Price
-                            Expanded(
-                              child: Text(
-                                localizations.sellerPriceLabel(
-                                  ref
-                                          .watch(stackStateProvider)
-                                          .stackSellData
-                                          ?.data?[widget.index]
-                                          .sellerPrice
-                                          ?.toString() ??
-                                      '',
-                                ),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                // Top Header Text Centered in Green
+                Text(
+                  headerTitle,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2E7D32),
+                    height: 1.35,
                   ),
                 ),
+                const SizedBox(height: 16),
 
-                // Bid Input Section
-                Row(
-                  children: [ 
-                    Expanded(
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                // Best Buyer : 0 | Best Seller : 0 Grey Container
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        "Best Buyer: ${stackData?.bestBuyerPrice ?? 0}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E7D32),
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              // Ensure no client is pre-selected when opening dialog
-                              ref
-                                  .read(bidsStateProvider.notifier)
-                                  .setClient(null);
-                              setState(() {});
-                              // Wait for dialog to be dismissed, then clear selection
-                              await NavigationService.showDialogGlobal(
-                                builder: (dialogContext) {
-                                  return AlertDialog(
-                                    title: Text(localizations.submitBid),
-                                    content: bidSubmitLayout(localizations),
-                                  );
-                                },
-                              );
+                      ),
+                      Text(
+                        "Best Seller: ${stackData?.sellerPrice ?? 0}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFC62828),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-                              // Clear selected client when dialog is dismissed
-                              ref
-                                  .read(bidsStateProvider.notifier)
-                                  .setClient(null);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2E7D32),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              localizations.addBid,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                // Buy & Sell Buttons Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _openBidSubmitDialog(context, localizations),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2E7D32),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          "Buy",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _openBidSubmitDialog(context, localizations),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFC62828),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          "Sell",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-                if (ref.read(bidsStateProvider).isLoadingTradeList) ...[
-                  Center(child: CircularProgressIndicator()),
-                  SizedBox(height: 16),
-                ] else // Bid History Section
-                if (ref
-                            .watch(stackStateProvider)
-                            .stackSellData
-                            ?.data?[widget.index]
-                            .stackBuySellConver !=
-                        null &&
-                    ref
-                        .watch(stackStateProvider)
-                        .stackSellData!
-                        .data![widget.index]
-                        .stackBuySellConver!
-                        .isNotEmpty)
-                  Card( 
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(  
-                            localizations.bidHistory,
-                            style: TextStyle(
-                              color: Color(0xFF2E7D32),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          ...ref
-                              .watch(stackStateProvider)
-                              .stackSellData!
-                              .data![widget.index]
-                              .stackBuySellConver!
-                              .map((bid) {
-                                // Check if this bid belongs to the current user
-                                final currentUserId = SharedPreferencesService
-                                    .userDetails
-                                    ?.userId;
-                                final isMyBid =
-                                    currentUserId != null &&
-                                    bid.userId.toString() ==
-                                        currentUserId.toString();
-                                final isMyName =
-                                    bid.userName != null &&
-                                    bid.userName ==
-                                        SharedPreferencesService
-                                            .userDetails
-                                            ?.name;
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: 12),
-
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(  
-                                      color: isMyBid
-                                          ? Colors.amber.shade900
-                                          : Colors.grey.shade300,
-                                      width: isMyBid ? 2 : 1,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [  
-                                      Padding(
-                                        padding: EdgeInsetsGeometry.all(10),
-                                        child: Column(  
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [ 
-                                                Expanded(
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        '${localizations.price}: ₹${bid.price}',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color(
-                                                            0xFF2E7D32,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      if (isMyBid) ...[
-                                                        SizedBox(width: 8),
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.symmetric(
-                                                                horizontal: 6,
-                                                                vertical: 2,
-                                                              ),
-                                                          decoration: BoxDecoration(
-                                                            color: Color(
-                                                              0xFF2E7D32,
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  10,
-                                                                ),
-                                                          ),
-                                                          child: Text(
-                                                            localizations
-                                                                .yourBid,
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ],
-                                                  ),
-                                                ),
-                                                if (bid.status != null)
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color: bid.status == 1
-                                                          ? Colors
-                                                                .green
-                                                                .shade100
-                                                          : Colors
-                                                                .grey
-                                                                .shade200,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      bid.status == 1
-                                                          ? localizations.active
-                                                          : localizations
-                                                                .inactive,
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: bid.status == 1
-                                                            ? Colors
-                                                                  .green
-                                                                  .shade800
-                                                            : Colors
-                                                                  .grey
-                                                                  .shade700,
-                                                      ),
-                                                    ),
-                                                  ),
-                                              ],
-                                            ),
-
-                                            if (bid.createdAt != null) ...[
-                                              SizedBox(height: 4),
-                                              Text(    
-                                                '${localizations.date}: ${bid.createdAt}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ],
-
-                                            SizedBox(height: 4),
-                                            Text(  
-                                              !isMyBid
-                                                  ? "${localizations.buyer} ${ref.watch(stackStateProvider).stackSellData!.data![widget.index].stackBuySellConver!.indexOf(bid) + 1}"
-                                                  : '${localizations.unknown}: ${isMyName ? "${localizations.buyer} ${ref.watch(stackStateProvider).stackSellData!.data![widget.index].stackBuySellConver!.indexOf(bid) + 1} " : bid.userName ?? '${localizations.unknown} ${ref.watch(stackStateProvider).stackSellData!.data![widget.index].stackBuySellConver!.indexOf(bid) + 1}'}',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      if (isMyBid)
-                                        Container(  
-                                          width: double.infinity,
-                                          padding: EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              bottomRight: Radius.circular(6),
-                                              bottomLeft: Radius.circular(6),
-                                            ),
-                                            color: Colors.amber.shade900,
-                                          ),
-                                          child: Text(
-                                            localizations.myBid,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              })
-                              ,
-                        ],
-                      ),
-                    ),
+                // Buyer Section Header
+                const Text(
+                  "Buyer",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2E7D32),
                   ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.grey.shade400),
+                  ),
+                  child: _buildBuyerBidsList(context, stackData),
+                ),
+                const SizedBox(height: 20),
 
-                if (ref 
-                            .watch(stackStateProvider)
-                            .stackSellData
-                            ?.data?[widget.index]
-                            .stackBuySellConver !=
-                        null &&
-                    ref
-                        .watch(stackStateProvider)
-                        .stackSellData!
-                        .data![widget.index]
-                        .stackBuySellConver!
-                        .isNotEmpty)
-                  SizedBox(height: 16),
+                // Seller Section Header
+                const Text(
+                  "Seller",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFC62828),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.grey.shade400),
+                  ),
+                  child: _buildSellerBidsList(context, stackData),
+                ),
+                const SizedBox(height: 20),
 
-                // Add Bid Button
+                // Matched Orders Section Header
+                const Text(
+                  "Matched Orders",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2E7D32),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildMatchedOrdersCard(context, ref, stackData),
+
+                const SizedBox(height: 16),
+                _buildRunningDealsSection(context, ref),
+                const SizedBox(height: 24),
               ],
             ),
           ),
         ),
-        onRefresh: () {  
-          return ref.watch(stackStateProvider.notifier).fetchStackSellList();
-        },
+      ),
+    );
+  }
+
+  void _openBidSubmitDialog(
+    BuildContext context,
+    AppLocalizations localizations,
+  ) async {
+    ref.read(bidsStateProvider.notifier).setClient(null);
+    setState(() {});
+    await NavigationService.showDialogGlobal(
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(localizations.submitBid),
+          content: bidSubmitLayout(localizations),
+        );
+      },
+    );
+    ref.read(bidsStateProvider.notifier).setClient(null);
+  }
+
+  Widget _buildBuyerBidsList(BuildContext context, Datum? stackData) {
+    final list = stackData?.stackBuySellConver ?? [];
+    if (list.isEmpty) {
+      return const Center(
+        child: Text(
+          "No Bids",
+          style: TextStyle(fontSize: 13, color: Colors.black87),
+        ),
+      );
+    }
+    return Column(
+      children: list.map((bid) => _buildBidRow(context, bid)).toList(),
+    );
+  }
+
+  Widget _buildSellerBidsList(BuildContext context, Datum? stackData) {
+    // Return No Bids or Seller bids if segregated
+    return const Center(
+      child: Text(
+        "No Bids",
+        style: TextStyle(fontSize: 13, color: Colors.black87),
+      ),
+    );
+  }
+
+  Widget _buildBidRow(BuildContext context, dynamic bid) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Price: ₹${bid.price}",
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E7D32),
+            ),
+          ),
+          if (bid.userName != null)
+            Text(
+              "${bid.userName}",
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMatchedOrdersCard(
+    BuildContext context,
+    WidgetRef ref,
+    Datum? stackData,
+  ) {
+    final runningDeals =
+        ref.watch(stackStateProvider).runningDealsData?.data ?? [];
+    RunningDealItem? matchedDeal;
+    for (var deal in runningDeals) {
+      if (stackData?.id != null && deal.productId == stackData?.id) {
+        matchedDeal = deal;
+        break;
+      }
+    }
+    if (matchedDeal == null && runningDeals.isNotEmpty) {
+      matchedDeal = runningDeals.first;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.green.shade300, width: 1.2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Center(
+            child: Text(
+              "Deal",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFC62828),
+              ),
+            ),
+          ),
+          const Divider(height: 16),
+          Text(
+            "Order ID: ${matchedDeal?.orderId ?? 'SBT-11082026-6968'}",
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E7D32),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Date: ${matchedDeal?.orderMatchDate ?? '11 Aug 2026'}",
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E7D32),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Expiry Date: ${matchedDeal?.orderMatchDate ?? '17 Aug 2026'}",
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E7D32),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -751,5 +608,990 @@ class _TruckLoadDetailsScreenState
     setState(() {
       _bidAmountController.clear();
     });
+  }
+
+  Widget _buildRunningDealsSection(BuildContext context, WidgetRef ref) {
+    final stackState = ref.watch(stackStateProvider);
+    final runningDeals = stackState.runningDealsData?.data ?? [];
+    if (runningDeals.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: const [
+                  Icon(Icons.local_shipping, color: Color(0xFF2E7D32)),
+                  SizedBox(width: 8),
+                  Text(
+                    "Running Deals",
+                    style: TextStyle(
+                      color: Color(0xFF2E7D32),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 20),
+              ...runningDeals.map((deal) => _buildRunningDealTile(context, ref, deal)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRunningDealTile(
+    BuildContext context,
+    WidgetRef ref,
+    RunningDealItem deal,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.green.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.green.shade300),
+                  ),
+                  child: Text(
+                    "Order ID: ${deal.orderId}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Color(0xFF2E7D32),
+                    ),
+                  ),
+                ),
+              ),
+              if (deal.orderMatchDate.toString().isNotEmpty) ...[
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    "Match: ${deal.orderMatchDate}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (deal.clientName.toString().isNotEmpty)
+            Text(
+              "Client: ${deal.clientName}",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  "Commodity: ${deal.commodity.isNotEmpty ? deal.commodity : deal.commodityName}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "Price: ₹${deal.price}",
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2E7D32),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  "Weight: ${deal.weight} Qtl.",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "Delivered: ${deal.deliveredWeight} Qtl.",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber.shade900,
+                ),
+              ),
+            ],
+          ),
+          if (deal.brokeroutWardview.toString() == "1") ...[
+            const SizedBox(height: 10),
+            Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showOutwardRequestDialog(context, ref, deal),
+                    icon: const Icon(Icons.add_circle_outline, size: 14),
+                    label: const Text(
+                      "Send Outward Request",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2E7D32),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showViewOutwardRequestsDialog(
+                      context,
+                      ref,
+                      deal.orderId.toString(),
+                    ),
+                    icon: const Icon(Icons.visibility_outlined, size: 14),
+                    label: const Text(
+                      "See Outward Requests",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF2E7D32),
+                      side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showOutwardRequestDialog(
+    BuildContext context,
+    WidgetRef ref,
+    RunningDealItem deal,
+  ) {
+    final formKey = GlobalKey<FormState>();
+    final truckNumberController = TextEditingController(
+      text: deal.truckNumber.toString(),
+    );
+    final driverNumberController = TextEditingController(
+      text: deal.driverNumber.toString(),
+    );
+    final weightController = TextEditingController(
+      text: deal.weight.toString(),
+    );
+    List<dynamic> existingRequests = [];
+    bool isLoadingRequests = true;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            if (isLoadingRequests) {
+              ref
+                  .read(stackStateProvider.notifier)
+                  .fetchOrderOutwardInfo(deal.orderId.toString())
+                  .then((info) {
+                    if (info != null) {
+                      final list = info['Data'] ?? info['data'];
+                      if (list is List) {
+                        existingRequests = list;
+                      }
+                    }
+                    setDialogState(() {
+                      isLoadingRequests = false;
+                    });
+                  });
+            }
+
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Add OutWard Request Details",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () => Navigator.of(dialogCtx).pop(),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 20),
+
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              "Order ID : - ${deal.orderId}",
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+
+                        if (existingRequests.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.green.shade200),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Outward Requests (${existingRequests.length}):",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                    color: Color(0xFF2E7D32),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                ...existingRequests.map((req) {
+                                  final truck =
+                                      req['truckNumber'] ??
+                                      req['truck_number'] ??
+                                      '';
+                                  final driver =
+                                      req['driverNumber'] ??
+                                      req['driver_number'] ??
+                                      '';
+                                  final w =
+                                      req['outwardWeight'] ??
+                                      req['weight'] ??
+                                      '';
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.check_circle_outline,
+                                          size: 14,
+                                          color: Color(0xFF2E7D32),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            "Truck: $truck | Driver: $driver | Weight: $w QTL",
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey.shade800,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        const SizedBox(height: 16),
+
+                        Text(
+                          "Truck Number*",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: truckNumberController,
+                          textCapitalization: TextCapitalization.characters,
+                          decoration: InputDecoration(
+                            hintText: "Enter Truck Number",
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 14,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 14,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.shade50,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade400,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2E7D32),
+                                width: 2.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.red.shade400,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.red.shade700,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return "Please enter Truck Number";
+                            }
+                            if (val.trim().length < 4) {
+                              return "Please enter valid Truck Number";
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        Text(
+                          "Driver Number*",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: driverNumberController,
+                          keyboardType: TextInputType.phone,
+                          maxLength: 10,
+                          decoration: InputDecoration(
+                            hintText: "Driver Number",
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 14,
+                            ),
+                            counterText: "",
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 14,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.shade50,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade400,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2E7D32),
+                                width: 2.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.red.shade400,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.red.shade700,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return "Please enter Driver Number";
+                            }
+                            final digits = val.trim().replaceAll(
+                              RegExp(r'\D'),
+                              '',
+                            );
+                            if (digits.length != 10) {
+                              return "Please enter valid 10-digit mobile number";
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        Text(
+                          "Weight (QTL.)*",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: weightController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Enter OutWard Weight",
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 14,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 14,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.shade50,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade400,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2E7D32),
+                                width: 2.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.red.shade400,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.red.shade700,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return "Please enter Outward Weight";
+                            }
+                            final weightVal = double.tryParse(val.trim());
+                            if (weightVal == null || weightVal <= 0) {
+                              return "Please enter valid weight in Quintals";
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              Navigator.of(dialogCtx).pop();
+                              final success = await ref
+                                  .read(stackStateProvider.notifier)
+                                  .submitBuyerOutwardRequest(
+                                    orderId: deal.orderId.toString(),
+                                    truckNumber: truckNumberController.text
+                                        .trim()
+                                        .toUpperCase(),
+                                    driverNumber:
+                                        driverNumberController.text.trim(),
+                                    weight: weightController.text.trim(),
+                                  );
+                              if (success && context.mounted) {
+                                _showViewOutwardRequestsDialog(
+                                  context,
+                                  ref,
+                                  deal.orderId.toString(),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2E7D32),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          child: const Text(
+                            "Add / Save",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showViewOutwardRequestsDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String orderId,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: FutureBuilder<Map<String, dynamic>?>(
+                  future: ref
+                      .read(stackStateProvider.notifier)
+                      .fetchOrderOutwardInfo(orderId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        height: 180,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF2E7D32),
+                          ),
+                        ),
+                      );
+                    }
+
+                    final data = snapshot.data;
+                    final list =
+                        (data != null && data['Data'] is List)
+                            ? (data['Data'] as List)
+                            : [];
+
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Flexible(
+                              child: Text(
+                                "Outward Requests",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF2E7D32),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () => Navigator.of(dialogCtx).pop(),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade50,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.green.shade300),
+                          ),
+                          child: Text(
+                            "Order ID: $orderId",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Color(0xFF2E7D32),
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 20),
+                        if (list.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: Text(
+                                "No Outward Requests Found",
+                                style: TextStyle(color: Colors.grey, fontSize: 14),
+                              ),
+                            ),
+                          )
+                        else
+                          Flexible(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children:
+                                    list.map((item) {
+                                      final reqId =
+                                          item['id'] ?? item['requestId'] ?? '';
+                                      final truck =
+                                          item['truckNumber'] ??
+                                          item['truck_number'] ??
+                                          '-';
+                                      final driver =
+                                          item['driverNumber'] ??
+                                          item['driver_number'] ??
+                                          '-';
+                                      final weight =
+                                          item['outwardWeight'] ??
+                                          item['weight'] ??
+                                          '-';
+                                      final createdAt =
+                                          item['created_at'] ?? '';
+                                      return Container(
+                                        margin: const EdgeInsets.only(
+                                          bottom: 10,
+                                        ),
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.grey.shade300,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.local_shipping,
+                                                      size: 16,
+                                                      color: Color(0xFF2E7D32),
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      "Truck: $truck",
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 3,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green.shade100,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    "$weight QTL",
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 11,
+                                                      color: Color(0xFF2E7D32),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.phone,
+                                                      size: 14,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      "Driver: $driver",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.grey.shade800,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                if (reqId
+                                                    .toString()
+                                                    .isNotEmpty)
+                                                  InkWell(
+                                                    onTap: () {
+                                                      _confirmRejectRequest(
+                                                        context,
+                                                        ref,
+                                                        reqId.toString(),
+                                                        truck.toString(),
+                                                        () {
+                                                          setDialogState(() {});
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade50,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              4,
+                                                            ),
+                                                        border: Border.all(
+                                                          color: Colors
+                                                              .red
+                                                              .shade200,
+                                                        ),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: const [
+                                                          Icon(
+                                                            Icons
+                                                                .cancel_outlined,
+                                                            size: 13,
+                                                            color: Colors.red,
+                                                          ),
+                                                          SizedBox(width: 3),
+                                                          Text(
+                                                            "Reject",
+                                                            style: TextStyle(
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors.red,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            if (createdAt.isNotEmpty) ...[
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.access_time,
+                                                    size: 14,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    "Created: $createdAt",
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      color:
+                                                          Colors.grey.shade600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(dialogCtx).pop(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2E7D32),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          child: const Text("Close"),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _confirmRejectRequest(
+    BuildContext context,
+    WidgetRef ref,
+    String requestId,
+    String truckNumber,
+    VoidCallback onDone,
+  ) {
+    showDialog(
+      context: context,
+      builder: (confirmCtx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: const Text("Reject Outward Request"),
+          content: Text(
+            "Are you sure you want to reject outward request for Truck $truckNumber?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(confirmCtx).pop(),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(confirmCtx).pop();
+                final success = await ref
+                    .read(stackStateProvider.notifier)
+                    .rejectOutwardRequest(requestId);
+                if (success) {
+                  onDone();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade700,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("Reject"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -20,6 +20,8 @@ import 'package:ag_broker/presentation/features/lp_clients/add_lp_client_page.da
 import 'package:ag_broker/presentation/features/bids/bids_history_page.dart';
 import 'package:ag_broker/presentation/features/wallet/wallet_hub_page.dart';
 import 'package:ag_broker/presentation/features/wallet/wallet_statement_page.dart';
+import 'package:ag_broker/presentation/features/deals/running_deals_page.dart';
+import 'package:ag_broker/presentation/features/deals/delivered_deals_page.dart';
 import 'package:ag_broker/presentation/features/wallet/withdrawal_request_page.dart';
 
 // ── Helper to resolve memberType from SharedPreferences ──────────────────────
@@ -67,6 +69,23 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/home/bids-history',
         builder: (context, state) => BidsHistoryPage(),
+      ),
+
+      GoRoute(
+        path: '/home/running-deals',
+        builder: (context, state) => const RunningDealsPage(),
+      ),
+      GoRoute(
+        path: '/home/delivered-deals',
+        builder: (context, state) => const DeliveredDealsPage(),
+      ),
+      GoRoute(
+        path: '/running-deals',
+        builder: (context, state) => const RunningDealsPage(),
+      ),
+      GoRoute(
+        path: '/delivered-deals',
+        builder: (context, state) => const DeliveredDealsPage(),
       ),
 
       // ── LP Clients ─────────────────────────────────────────────────────────

@@ -9,7 +9,6 @@ import 'package:ag_broker/l10n/app_localizations.dart';
 import 'package:ag_broker/presentation/common/auth_providers.dart';
 import 'package:ag_broker/presentation/common/buy_bottomsheet.dart';
 import 'package:ag_broker/presentation/common/sell_bottomsheet.dart';
-import 'package:ag_broker/presentation/common/widgets/audio_widget.dart';
 import 'package:ag_broker/presentation/features/bids/buyer_list.dart';
 import 'package:ag_broker/presentation/features/bids/seller_list.dart';
 import 'package:ag_broker/presentation/providers/bids_provider.dart';
@@ -88,7 +87,6 @@ class _HomePageState extends ConsumerState<HomePage>
         final sbtProduct = ref.watch(sbtStateProvider);
         final stackSellList = ref.watch(stackStateProvider);
         return Scaffold(
-          floatingActionButton: AudioWidget(),
           appBar: AppBar(
             title: Text(
               "${localizations.appTitle}, ${SharedPreferencesService.userDetails?.name}",
@@ -132,37 +130,19 @@ class _HomePageState extends ConsumerState<HomePage>
             children: [  
               // Delivery Tab
               RefreshIndicator(
-                child: ref.watch(sbtStateProvider).isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : ListView(
-                        children: (sbtProduct.sbtProductData?.data ?? [])
-                            .map((e) => _buildSbtCard(e, localizations))
-                            .toList(),
-                      ),
                 onRefresh: () {
                   return ref.read(sbtStateProvider.notifier).fetchSbtProducts();
                 },
+                child: _buildDeliveryTabContent(context, ref, sbtProduct, localizations),
               ),
               // Truck Load Tab
               RefreshIndicator(
-                child: ref.watch(stackStateProvider).isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : ListView.separated(  
-                        itemCount:
-                            (stackSellList.stackSellData?.data ?? []).length,
-                        itemBuilder: (context, index) => _buildDeliveryCard(
-                          (stackSellList.stackSellData?.data ?? [])[index],
-                          localizations,
-                          index,
-                        ),
-                        separatorBuilder: (context, index) =>
-                            Divider(height: 8, thickness: 1),
-                      ),
                 onRefresh: () {
                   return ref
                       .read(stackStateProvider.notifier)
                       .fetchStackSellList();
                 },
+                child: _buildTruckLoadTabContent(context, ref, stackSellList, localizations),
               ),
             ],
           ),
@@ -170,6 +150,212 @@ class _HomePageState extends ConsumerState<HomePage>
       },
     );
   }
+
+  Widget _buildDeliveryTabContent(
+    BuildContext context,
+    WidgetRef ref,
+    SbtState sbtState,
+    AppLocalizations localizations,
+  ) {
+    if (sbtState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (sbtState.error != null && sbtState.error!.isNotEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline_rounded,
+                      size: 64,
+                      color: Colors.red.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      localizations.errorOccurred,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade800,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      sbtState.error!,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        ref.read(sbtStateProvider.notifier).fetchSbtProducts();
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: Text(localizations.retry),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    final sbtItems = sbtState.sbtProductData?.data ?? [];
+    if (sbtItems.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.inbox_outlined,
+                      size: 64,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      localizations.noDataAvailable,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade700,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'कोई डिलीवरी डेटा उपलब्ध नहीं है। refresh करने के लिए नीचे खींचें या पुनः प्रयास करें पर टैप करें।',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        ref.read(sbtStateProvider.notifier).fetchSbtProducts();
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: Text(localizations.retry),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: sbtItems.map((e) => _buildSbtCard(e, localizations)).toList(),
+    );
+  }
+
+  Widget _buildTruckLoadTabContent(
+    BuildContext context,
+    WidgetRef ref,
+    StackState stackState,
+    AppLocalizations localizations,
+  ) {
+    return _buildStackSellListSection(context, ref, stackState, localizations);
+  }
+
+
+
+  Widget _buildStackSellListSection(
+    BuildContext context,
+    WidgetRef ref,
+    StackState stackState,
+    AppLocalizations localizations,
+  ) {
+    if (stackState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final stackItems = stackState.stackSellData?.data ?? [];
+    if (stackItems.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.fire_truck_outlined, size: 64, color: Colors.grey.shade400),
+                  const SizedBox(height: 16),
+                  Text(
+                    localizations.noDataAvailable,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade700),
+                  ),
+                  const SizedBox(height: 20),
+                  OutlinedButton.icon(
+                    onPressed: () => ref.read(stackStateProvider.notifier).fetchStackSellList(),
+                    icon: const Icon(Icons.refresh),
+                    label: Text(localizations.retry),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(10),
+      itemCount: stackItems.length,
+      itemBuilder: (context, index) => _buildDeliveryCard(
+        stackItems[index],
+        localizations,
+        index,
+      ),
+      separatorBuilder: (context, index) => const Divider(height: 8, thickness: 1),
+    );
+  }
+
+
+
+
 
   // void _showPrinterSelection(BuildContext context) {
   //   showDialog(
@@ -362,143 +548,181 @@ class _HomePageState extends ConsumerState<HomePage>
     Datum data,
     AppLocalizations localizations,
     int index,
-  ) => Card(  
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadiusGeometry.circular(8),
-      side: BorderSide(color: Colors.amber.shade900),
-    ),
-    margin: EdgeInsets.all(10),
-    child: InkWell(
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  ) {
+    final titleText =
+        "${data.commodityName} (${data.warehouseName} ( Stack No.${data.stackNumber} )${data.deliveryDays != null ? ' , Manda Delivery Days :- ${data.deliveryDays}' : ''})";
+    final subTitleText =
+        "${data.warehouseName} ( Stack No.${data.stackNumber} )${data.deliveryDays != null ? ' , Manda Delivery Days :- ${data.deliveryDays}' : ''}";
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.amber.shade900, width: 1.5),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () {
+          GoRouter.of(context).push('/stack-details', extra: index);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: EdgeInsetsGeometry.all(10),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: CircleAvatar(
-                    radius: 36,
-                    backgroundImage: NetworkImage(  
-                      kDebugMode
-                          ? Constants.testApiBaseUrl +
-                                data.commodityPath +
-                                data.commodityImage
-                          : (Constants.apiBaseUrl +
-                                data.commodityPath +
-                                data.commodityImage),
-                    ),
-                  ),
+              // Orange Title at top center
+              Text(
+                titleText,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber.shade900,
+                  height: 1.3,
                 ),
               ),
-              Expanded(
-                child: Column(  
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(right: 10, top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text.rich(  
-                              TextSpan(
-                                text: "${data.commodityName}  ",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: localizations.tapToPunchOrder,
+              const SizedBox(height: 8),
 
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
+              // Sub-title in black
+              Text(
+                subTitleText,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  height: 1.3,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Best Buyer & Best Seller Price Row with Grey Boxes
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Best Buyer",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "${data.bestBuyerPrice ?? 0}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10),
-                    Text(
-                      "${localizations.stackNo} ${data.stackNumber}",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                  ),
+                  const SizedBox(width: 24),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Best Seller",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "${data.sellerPrice ?? 0}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10),
-                    Text.rich(TextSpan(text: "${data.warehouseName}")),
-                    SizedBox(height: 10),
-                    HtmlWidget('''
-  ${data.bidTime}
-  '''),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // Bid Time text center aligned
+              Center(
+                child: data.bidTime.toString().isNotEmpty
+                    ? HtmlWidget(
+                        data.bidTime,
+                        textStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      )
+                    : const Text(
+                        "Bid Time: 11:00 AM To 03:00 PM",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+              ),
+              const SizedBox(height: 14),
+
+              // Solid Dark Green Order Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context).push('/stack-details', extra: index);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2E7D32),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    "Order",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsetsGeometry.all(10),
-            decoration: BoxDecoration(
-              color: Colors.amber.shade900,
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
-              ),
-            ),
-            margin: EdgeInsets.only(top: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${localizations.bestBuyer} \n${data.bestBuyerPrice ?? 0}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                // Expanded(
-                //   child: Text(
-                //     '${localizations.myPrice} \n0',
-                //     textAlign: TextAlign.center,
-                //     style: TextStyle(
-                //       fontWeight: FontWeight.bold,
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                // ),
-                Expanded(
-                  child: Text(
-                    '${localizations.sellerPrice} \n${data.sellerPrice}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
-      onTap: () {
-        GoRouter.of(context).push('/stack-details', extra: index);
-      },
-    ),
-  );
+    );
+  }
 
   Widget _buildSbtCard(SbtProduct data, AppLocalizations localizations) => Card(
     elevation: 2,
@@ -1654,6 +1878,36 @@ class _HomePageState extends ConsumerState<HomePage>
 
                 const SizedBox(height: 2),
 
+                // ── MY CLIENT DEALS ───────────────────────────────────────────
+                _drawerExpandable(
+                  context,
+                  icon: Icons.home_outlined,
+                  label: 'My Client Deals',
+                  iconColor: primary,
+                  children: [
+                    _drawerSubTile(
+                      context,
+                      label: 'Running Deals',
+                      icon: Icons.local_shipping_outlined,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.push('/home/running-deals');
+                      },
+                    ),
+                    _drawerSubTile(
+                      context,
+                      label: 'Delivered Deals',
+                      icon: Icons.local_shipping_outlined,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.push('/home/delivered-deals');
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 2),
+
                 // ── PROFILE ───────────────────────────────────────────────────
                 _drawerExpandable(  
                   context,
@@ -1967,27 +2221,31 @@ class _HomePageState extends ConsumerState<HomePage>
     BuildContext context, {
     required String label,
     required VoidCallback onTap,
+    IconData? icon,
   }) {
     final primary = Theme.of(context).primaryColor;
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.only(
-          left: 64,
+        padding: EdgeInsets.only(
+          left: icon != null ? 54 : 64,
           right: 16,
           top: 10,
           bottom: 10,
         ),
         child: Row(
           children: [
-            Container(  
-              width: 6, 
-              height: 6,
-              decoration: BoxDecoration(
-                color: primary.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
+            if (icon != null)
+              Icon(icon, size: 18, color: Colors.grey.shade700)
+            else
+              Container(  
+                width: 6, 
+                height: 6,
+                decoration: BoxDecoration(
+                  color: primary.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
             const SizedBox(width: 10),
             Text(
               label,

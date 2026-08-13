@@ -43,4 +43,12 @@ class Constants {
   //LP Client endpoints
   static const String lpClientList = 'lp_api/apna_lp_client_list';
   static const String addLpClient = 'lp_api/apna_lp_add_client';
+
+  //Outward & Deals Endpoints
+  static const String runningDeals = 'lp_api/brokerRunningDeals';
+  static const String deliveredDeals = 'lp_api/lp-delivered-deals';
+  static const String orderOutwardRequest = 'lp_api/getBrokerOutWardRequest';
+  static const String buyerOutwardRequest = 'lp_api/brokerOutWardRequest';
+  static const String rejectOutwardRequest = 'lp_api/rejectBrokerOutWardRequest';
+  static const String saveAccessLog = 'lp_api/save_access_log';
 }

@@ -49,6 +49,7 @@ class Datum {
   dynamic buyerPrice;
   List<StackBuySellConver>? stackBuySellConver;
   dynamic bidTime;
+  dynamic deliveryDays;
 
   Datum({
     this.id,
@@ -68,6 +69,7 @@ class Datum {
     this.buyerPrice,
     this.stackBuySellConver,
     this.bidTime,
+    this.deliveryDays,
   });
 
   factory Datum.fromMap(Map<dynamic, dynamic> json) => Datum(
@@ -94,6 +96,7 @@ class Datum {
             ),
           ),
     bidTime: json["bid_time"],
+    deliveryDays: json["deliveryDays"] ?? json["delivery_days"],
   );
 
   Map<dynamic, dynamic> toMap() => {
@@ -108,6 +111,7 @@ class Datum {
     "quantity": quantity,
     "min_price": minPrice,
     "max_price": maxPrice,
+    "deliveryDays": deliveryDays,
     "commodity_image": commodityImage,
     "commodity_path": commodityPath,
     "best_buyer_price": bestBuyerPrice,

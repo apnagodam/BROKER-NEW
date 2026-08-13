@@ -1,3 +1,4 @@
+import 'package:ag_broker/core/providers/router_provider.dart';
 import 'package:ag_broker/core/theme/app_theme.dart';
 import 'package:ag_broker/core/utils/navigation_service.dart';
 import 'package:ag_broker/core/utils/notification_service.dart';
@@ -7,6 +8,8 @@ import 'package:ag_broker/presentation/features/Tm_fees_page.dart';
 import 'package:ag_broker/presentation/features/add_security_page.dart';
 import 'package:ag_broker/presentation/features/auth/login/login_page.dart';
 import 'package:ag_broker/presentation/features/auth/login/otp_verification_page.dart';
+import 'package:ag_broker/presentation/features/deals/running_deals_page.dart';
+import 'package:ag_broker/presentation/features/deals/delivered_deals_page.dart';
 import 'package:ag_broker/presentation/features/bids/bids_history_page.dart';
 import 'package:ag_broker/presentation/features/home/home_page.dart';
 import 'package:ag_broker/presentation/features/lp_clients/add_lp_client_page.dart';
@@ -49,113 +52,7 @@ void main() async {
   runApp(ProviderScope(child: MyApp()));
 }
 
-final GoRouter _router = GoRouter(
-  navigatorKey: NavigationService.navigatorKey,
-  initialLocation: SharedPreferencesService.isLoggedIn ? '/home' : '/login',
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) {
-        return SharedPreferencesService.isLoggedIn ? HomePage() : LoginPage();
-      },
-    ),
-    GoRoute(path: '/login', builder: (context, state) => LoginPage()),
-    GoRoute(
-      path: '/otp-verification',
-      builder: (context, state) {
-        final phoneNumber = state.uri.queryParameters['phone'] ?? '';
-        return OtpVerificationPage(phoneNumber: phoneNumber);
-      },
-    ),
-    GoRoute(
-      path: '/stack-details',
-      builder: (context, state) {
-        final stackData = state.extra as int;
-        return TruckLoadDetailsScreen(index: stackData);
-      },
-    ),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => HomePage(),
-      routes: [
-        // ── Profile ─────────────────────────────────────────────────────
-        GoRoute(path: 'profile', builder: (context, state) => ProfilePage()),
-        GoRoute(
-          path: 'brokerage-profile',
-          builder: (context, state) => BrokerageProfile(),
-        ),
-        GoRoute(
-          path: 'bids-history',
-          builder: (context, state) => BidsHistoryPage(),
-        ),
 
-        // ── LP Clients ───────────────────────────────────────────────────
-        GoRoute(
-          path: 'lp-clients',
-          builder: (context, state) => const LpClientListPage(),
-        ),
-        GoRoute(
-          path: 'lp-clients/add',
-          builder: (context, state) => const AddLpClientPage(),
-        ),
-
-        // ── Wallet ───────────────────────────────────────────────────────
-        GoRoute(
-          path: 'wallet-statement',
-          builder: (context, state) => WalletStatementPage(),
-        ),
-        GoRoute(
-          path: 'withdrawal-request',
-          builder: (context, state) => WithdrawalRequestPage(),
-        ),
-        GoRoute(
-          path: 'trade-power-statement',
-          builder: (context, state) => const TradePowerStatementPage(),
-        ),
-
-        // ── Members ──────────────────────────────────────────────────────
-        GoRoute(
-          path: 'authorised-person',
-          builder: (context, state) => const AuthorisedPersonPage(),
-        ),
-        GoRoute(
-          path: 'tm-fees',
-          builder: (context, state) => const TmFeesPage(),
-        ),
-        GoRoute(
-          path: 'add-security',
-          builder: (context, state) => const AddSecurityPage(),
-        ),
-
-        // ── SBT Products ─────────────────────────────────────────────────
-        GoRoute(
-          path: 'sbt-secure-product',
-          builder: (context, state) => const SbtSecureProductPage(),
-        ),
-        GoRoute(
-          path: 'sbt-unsecure-product',
-          builder: (context, state) => const SbtUnsecureProductPage(),
-        ),
-
-        // ── Margin Funding ────────────────────────────────────────────────
-        GoRoute(
-          path: 'margin-funding-schemes',           // ✅ no leading slash, no /home/ prefix
-          builder: (context, state) => const MarginFundingSchemesPage(),
-        ),
-        GoRoute(
-          path: 'margin-funding-limit',             // ✅ same pattern
-          builder: (context, state) =>
-              const _PlaceholderPage(title: 'Margin Funding Limit'),
-        ),
-        GoRoute(
-          path: 'margin-funding-request',           // ✅ same pattern
-          builder: (context, state) =>
-              const _PlaceholderPage(title: 'Margin Funding Request'),
-        ),
-      ],
-    ),
-  ],
-);
 
 // ── Temporary placeholder ─────────────────────────────────────────────────────
 class _PlaceholderPage extends StatelessWidget {
@@ -198,6 +95,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
+    final router = ref.watch(routerProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'AG Broker',
@@ -205,7 +103,7 @@ class MyApp extends ConsumerWidget {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      routerConfig: _router,
+      routerConfig: router,
     );
   }
 }

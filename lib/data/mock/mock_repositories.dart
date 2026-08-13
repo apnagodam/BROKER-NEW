@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ag_broker/domain/entities/deals_model.dart';
+import 'package:ag_broker/domain/entities/running_deal_model.dart';
 
 import 'package:ag_broker/domain/entities/stack_sell_list_model.dart';
 import 'package:ag_broker/domain/entities/client_list_model.dart';
@@ -42,6 +43,37 @@ class MockStackRepositoryImpl extends StackRepository {
       'message': 'Mock bid placed successfully',
     });
   }
+
+  @override
+  Future<RunningDealsResponse> getRunningDeals() async {
+    return Future.value(RunningDealsResponse(data: []));
+  }
+
+  @override
+  Future<RunningDealsResponse> getDeliveredDeals() async {
+    return Future.value(RunningDealsResponse(data: []));
+  }
+
+  @override
+  Future<Map<String, dynamic>> getOrderOutwardRequest(String orderId) async {
+    return Future.value({'status': 1, 'data': {}});
+  }
+
+  @override
+  Future<Map<String, dynamic>> postBuyerOutwardRequest({
+    required String orderId,
+    required String truckNumber,
+    required String driverNumber,
+    required String weight,
+  }) async {
+    return Future.value({
+      'status': 1,
+      'message': 'Outward details submitted successfully',
+    });
+  }
+
+  @override
+  Future<void> saveAccessLog(String pageName) async {}
 }
 
 class MockBidsRepositoryImpl extends BidsRepository {
