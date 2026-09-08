@@ -145,7 +145,11 @@ class _LoggingInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (!response.requestOptions.path.contains('apna_send_otp')) {
+    final path = response.requestOptions.path;
+    if (!path.contains('apna_send_otp') &&
+        !path.contains('lp_check_user') &&
+        !path.contains('lp_send_otp') &&
+        !path.contains('lp_verify_otp')) {
       if ((response.data['message'].toString().contains('User not found!') ||
           response.data['message'].toString().contains(
             'उपयोगकर्ता नहीं मिला!',

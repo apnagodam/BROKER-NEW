@@ -42,9 +42,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (context, state) => LoginPage()),
       GoRoute(
         path: '/otp-verification',
-        builder: (context, state) { 
+        builder: (context, state) {
           final phoneNumber = state.uri.queryParameters['phone'] ?? '';
-          return OtpVerificationPage(phoneNumber: phoneNumber);
+          final userId = int.tryParse(state.uri.queryParameters['userId'] ?? '') ??
+              (state.extra is Map ? (state.extra as Map)['userId'] as int? ?? 0 : 0);
+          final userName = state.uri.queryParameters['userName'] ??
+              (state.extra is Map ? (state.extra as Map)['userName'] as String? ?? '' : '');
+          final memberTypeName = state.uri.queryParameters['memberTypeName'] ??
+              (state.extra is Map ? (state.extra as Map)['memberTypeName'] as String? ?? '' : '');
+          return OtpVerificationPage(
+            phoneNumber: phoneNumber,
+            userId: userId,
+            userName: userName,
+            memberTypeName: memberTypeName,
+          );
         },
       ),
       GoRoute(path: '/home', builder: (context, state) => HomePage()),

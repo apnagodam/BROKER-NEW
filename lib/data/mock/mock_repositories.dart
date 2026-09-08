@@ -74,6 +74,12 @@ class MockStackRepositoryImpl extends StackRepository {
 
   @override
   Future<void> saveAccessLog(String pageName) async {}
+
+  @override
+  Future<Map<String, dynamic>> rejectOutwardRequest(String requestId) {
+    // TODO: implement rejectOutwardRequest
+    throw UnimplementedError();
+  }
 }
 
 class MockBidsRepositoryImpl extends BidsRepository {

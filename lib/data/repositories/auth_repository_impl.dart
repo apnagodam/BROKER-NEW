@@ -13,13 +13,11 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(Locale locale) : _dioClient = DioClient(locale);
 
   @override
-  Future<Map<String, dynamic>> sendOtp(String phoneNumber) async {
-    var token = NotificationService.fcmToken;
+  Future<Map<String, dynamic>> checkUser(String phoneNumber) async {
     final response = await _dioClient.dio.post(
-      Constants.sendOtp,
-      data: {'number': phoneNumber, "app_type": "LP", "token": token},
+      Constants.checkUser,
+      data: {'number': phoneNumber},
     );
-    // Handle both string and already parsed JSON responses
     if (response.data is String) {
       return jsonDecode(response.data);
     }
@@ -27,12 +25,35 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> verifyOtp(String phoneNumber, String otp) async {
-    var token = NotificationService.fcmToken;
+  Future<Map<String, dynamic>> sendOtp({required int userId}) async {
+    final response = await _dioClient.dio.post(
+      Constants.sendOtp,
+      data: {'user_id': userId},
+    );
+    if (response.data is String) {
+      return jsonDecode(response.data);
+    }
+    return response.data;
+  }
+
+  @override
+  Future<Map<String, dynamic>> verifyOtp({
+    required int userId,
+    required String otp,
+    String? fcmToken,
+  }) async {
+    final token = fcmToken ?? NotificationService.fcmToken ?? '';
     final response = await _dioClient.dio.post(
       Constants.verifyOtp,
-      data: {'number': phoneNumber, "otp": otp, "token": token},
+      data: {
+        'otp': otp,
+        'user_id': userId,
+        'fcm_token': token,
+      },
     );
+    if (response.data is String) {
+      return jsonDecode(response.data);
+    }
     return response.data;
   }
 

@@ -4,8 +4,9 @@ class Constants {
   static const String testApiBaseUrl = 'https://demoaws.apnagodam.com/';
 
   //Auth Endpoints
-  static const String sendOtp = 'api/apna_send_otp';
-  static const String verifyOtp = 'api/apna_verify_otp';
+  static const String checkUser = 'lp_api/lp_check_user';
+  static const String sendOtp = 'lp_api/lp_send_otp';
+  static const String verifyOtp = 'lp_api/lp_verify_otp';
   static const String getBrokerage = 'lp_api/apna_lp_brokerage';
   static const String getUserDetails = 'lp_api/apna_lp_user_details';
 

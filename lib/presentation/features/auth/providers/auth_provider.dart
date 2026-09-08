@@ -65,12 +65,12 @@ class AuthNotifier extends Notifier<AuthState> {
     return const AuthState.initial();
   }
 
-  /// Send OTP to phone number
-  Future<void> sendOtp(String phoneNumber) async {
+  /// Send OTP to user ID
+  Future<void> sendOtp(int userId, {String phoneNumber = ''}) async {
     state = const AuthState.loading();
 
     try {
-      final response = await _repository.sendOtp(phoneNumber);
+      final response = await _repository.sendOtp(userId: userId);
 
       if (response['status'].toString() == "1") {
         state = AuthState.otpSent(phoneNumber: phoneNumber);
@@ -85,11 +85,11 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Verify OTP and authenticate user
-  Future<void> verifyOtp(String phoneNumber, String otp) async {
+  Future<void> verifyOtp(int userId, String otp, {String phoneNumber = ''}) async {
     state = const AuthState.loading();
 
     try {
-      final response = await _repository.verifyOtp(phoneNumber, otp);
+      final response = await _repository.verifyOtp(userId: userId, otp: otp);
 
       if (response['status'].toString() == "1") {
         // Complete login - save data and set authenticated state

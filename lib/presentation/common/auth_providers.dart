@@ -5,6 +5,8 @@ import 'package:ag_broker/domain/repositories/auth_repository.dart';
 import 'package:ag_broker/presentation/providers/locale_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:ag_broker/domain/entities/user_account_model.dart';
+
 // Repositories
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final locale = ref.watch(localeProvider);
@@ -25,6 +27,11 @@ class AuthState {
   final Map<String, dynamic>? brokerageResponse;
   final UserDetailsModel? userDetails;
   final bool isUserDetailsLoading;
+  final bool isCheckingUser;
+  final List<UserAccount> accounts;
+  final UserAccount? selectedAccount;
+  final String? checkUserError;
+
   AuthState({
     this.isLoading = false,
     this.error,
@@ -34,6 +41,10 @@ class AuthState {
     this.brokerageResponse,
     this.userDetails,
     this.isUserDetailsLoading = false,
+    this.isCheckingUser = false,
+    this.accounts = const [],
+    this.selectedAccount,
+    this.checkUserError,
   });
 
   AuthState copyWith({
@@ -45,6 +56,12 @@ class AuthState {
     Map<String, dynamic>? brokerageResponse,
     UserDetailsModel? userDetails,
     bool? isUserDetailsLoading,
+    bool? isCheckingUser,
+    List<UserAccount>? accounts,
+    UserAccount? selectedAccount,
+    bool clearSelectedAccount = false,
+    String? checkUserError,
+    bool clearCheckUserError = false,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
@@ -55,6 +72,14 @@ class AuthState {
       brokerageResponse: brokerageResponse ?? this.brokerageResponse,
       userDetails: userDetails ?? this.userDetails,
       isUserDetailsLoading: isUserDetailsLoading ?? this.isUserDetailsLoading,
+      isCheckingUser: isCheckingUser ?? this.isCheckingUser,
+      accounts: accounts ?? this.accounts,
+      selectedAccount: clearSelectedAccount
+          ? null
+          : (selectedAccount ?? this.selectedAccount),
+      checkUserError: clearCheckUserError
+          ? null
+          : (checkUserError ?? this.checkUserError),
     );
   }
 }
@@ -71,12 +96,70 @@ class AuthNotifier extends Notifier<AuthState> {
     return AuthState();
   }
 
+  Future<Map<String, dynamic>> checkUser(String phoneNumber) async {
+    state = state.copyWith(
+      isCheckingUser: true,
+      clearCheckUserError: true,
+      accounts: [],
+      clearSelectedAccount: true,
+    );
+    try {
+      final value = await repository.checkUser(phoneNumber);
+      if (value['status'].toString() == "1") {
+        final rawList = value['data'] as List? ?? [];
+        final parsedAccounts = rawList
+            .map((e) => UserAccount.fromJson(e as Map<String, dynamic>))
+            .toList();
+
+        // Auto-select if only 1 account exists
+        final autoSelected =
+            parsedAccounts.length == 1 ? parsedAccounts.first : null;
+
+        state = state.copyWith(
+          isCheckingUser: false,
+          accounts: parsedAccounts,
+          selectedAccount: autoSelected,
+          clearCheckUserError: true,
+        );
+        return value;
+      } else {
+        state = state.copyWith(
+          isCheckingUser: false,
+          checkUserError: value['message']?.toString() ?? 'User not found',
+          accounts: [],
+          clearSelectedAccount: true,
+        );
+        return value;
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isCheckingUser: false,
+        checkUserError: e.toString(),
+        accounts: [],
+        clearSelectedAccount: true,
+      );
+      return {'status': '0', 'message': e.toString()};
+    }
+  }
+
+  void selectAccount(UserAccount? account) {
+    state = state.copyWith(selectedAccount: account);
+  }
+
+  void clearAccounts() {
+    state = state.copyWith(
+      accounts: [],
+      clearSelectedAccount: true,
+      clearCheckUserError: true,
+    );
+  }
+
   Future<Map<String, dynamic>> getBrokerage() async {
     state = state.copyWith(isBrokerageLoading: true, error: null);
     try {
       var response = await repository.getBrokerage();
       if (response['status'].toString() == "1") {
-        state = state.copyWith(  
+        state = state.copyWith(
           isBrokerageLoading: false,
           brokerageResponse: response,
         );
@@ -98,35 +181,42 @@ class AuthNotifier extends Notifier<AuthState> {
     return state.brokerageResponse ?? {};
   }
 
-  Future<Map<String, dynamic>> sendOtp(String phoneNumber) async {
+  Future<Map<String, dynamic>> sendOtp(int userId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await repository.sendOtp(phoneNumber).then((value) {
-        if (value['status'].toString() == "1") {
-          state = state.copyWith(isLoading: false, response: value);
-        } else {
-          state = state.copyWith(
-            isLoading: false,
-            error: value['message'] ?? 'failedToSendOtp',
-            response: value,
-          );
-        }
-      });
+      final value = await repository.sendOtp(userId: userId);
+      if (value['status'].toString() == "1") {
+        state = state.copyWith(isLoading: false, response: value);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: value['message'] ?? 'failedToSendOtp',
+          response: value,
+        );
+      }
+      return value;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
         response: null,
       );
+      return {'status': '0', 'message': e.toString()};
     }
-
-    return state.response ?? {};
   }
 
-  Future<Map<String, dynamic>> verifyOtp(String phoneNumber, String otp) async {
+  Future<Map<String, dynamic>> verifyOtp({
+    required int userId,
+    required String otp,
+    String? fcmToken,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      var response = await repository.verifyOtp(phoneNumber, otp);
+      var response = await repository.verifyOtp(
+        userId: userId,
+        otp: otp,
+        fcmToken: fcmToken,
+      );
       if (response['status'].toString() == "1") {
         // Save complete login response data
         await SharedPreferencesService.saveCompleteLoginData(response);
@@ -137,7 +227,7 @@ class AuthNotifier extends Notifier<AuthState> {
         );
       } else if (response['status'].toString() == "3") {
         // Partial login - OTP verified but additional info needed
-        state = state.copyWith(  
+        state = state.copyWith(
           isLoading: false,
           response: response,
           isAuthenticated: false,
@@ -150,15 +240,15 @@ class AuthNotifier extends Notifier<AuthState> {
           response: response,
         );
       }
+      return response;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
         response: null,
       );
+      return {'status': '0', 'message': e.toString()};
     }
-
-    return state.response ?? {};
   }
 
   Future<void> getUserDetails() async {  
