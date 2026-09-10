@@ -1,5 +1,6 @@
 import 'package:ag_broker/domain/entities/trade_list_model.dart';
 import 'package:ag_broker/l10n/app_localizations.dart';
+import 'package:ag_broker/core/utils/product_helper.dart';
 import 'package:ag_broker/presentation/providers/bids_provider.dart';
 import 'package:ag_broker/presentation/providers/sbt_provider.dart';
 import 'package:flutter/material.dart';
@@ -109,10 +110,10 @@ class _EditBidsScreenState extends ConsumerState<EditBidsScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
-                  "${widget.commodityName} (${widget.districtName})",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  "${ProductHelper.cleanCommodityName(widget.commodityName, widget.districtName)} (${widget.districtName})",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Divider(color: Colors.grey),
 

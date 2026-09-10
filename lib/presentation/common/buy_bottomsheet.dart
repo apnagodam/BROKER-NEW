@@ -1,6 +1,7 @@
 import 'package:ag_broker/domain/entities/sbt_product.dart';
 import 'package:ag_broker/domain/entities/client_list_model.dart';
 import 'package:ag_broker/l10n/app_localizations.dart';
+import 'package:ag_broker/core/utils/product_helper.dart';
 import 'package:ag_broker/presentation/providers/bids_provider.dart';
 import 'package:ag_broker/presentation/providers/sbt_provider.dart';
 import 'package:flutter/material.dart';
@@ -115,10 +116,10 @@ class _BuyBottomsheetState extends ConsumerState<BuyBottomsheet> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text( 
-                "${widget.sbtData.commodity}(${widget.sbtData.district})",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                "${ProductHelper.cleanCommodityName(widget.sbtData.commodity, widget.sbtData.district)} (${widget.sbtData.district})",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Divider(color: Colors.grey),
               SizedBox(height: 10),

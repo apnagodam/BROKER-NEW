@@ -295,7 +295,7 @@ class StackNotifier extends Notifier<StackState> {
     }
   }
 
-  Future<void> postStackBid({
+  Future<bool> postStackBid({
     required String stackId,
     required String price,
     required String userId,
@@ -303,49 +303,48 @@ class StackNotifier extends Notifier<StackState> {
     NavigationService.showLoading();
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await repository
-          .postStackBid(stackId: stackId, price: price, userId: userId)
-          .then((value) async {
-            if (value['status'].toString() == "1") {
-              await fetchStackSellList();
-              NavigationService.successSnackbar(
-                value['message'] ?? 'Bid placed successfully',
-              );
-              ref.read(bidsStateProvider.notifier).setClient(null);
-              NavigationService.goBack();
-            } else {
-              NavigationService.goBack();
-
-              NavigationService.showDialogGlobal(
-                dismissLoadingFirst: true,
-                builder: (dialogContext) {
-                  final localizations = AppLocalizations.of(dialogContext)!;
-                  return AlertDialog(
-                    title: Text(localizations.errorOccurred),
-                    content: Text(
-                      value['message'] ?? localizations.errorOccurred,
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(dialogContext).pop();
-                        },
-                        child: Text(localizations.ok),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-          });
-      state = state.copyWith(isLoading: false);
-      // Handle response if needed
+      final value = await repository.postStackBid(
+        stackId: stackId,
+        price: price,
+        userId: userId,
+      );
       NavigationService.hideLoading();
+
+      if (value['status'].toString() == "1") {
+        await fetchStackSellList();
+        NavigationService.successSnackbar(
+          value['message'] ?? 'Bid placed successfully',
+        );
+        ref.read(bidsStateProvider.notifier).setClient(null);
+        state = state.copyWith(isLoading: false);
+        return true;
+      } else {
+        state = state.copyWith(isLoading: false);
+        NavigationService.showDialogGlobal(
+          dismissLoadingFirst: true,
+          builder: (dialogContext) {
+            final localizations = AppLocalizations.of(dialogContext)!;
+            return AlertDialog(
+              title: Text(localizations.errorOccurred),
+              content: Text(
+                value['message'] ?? localizations.errorOccurred,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: Text(localizations.ok),
+                ),
+              ],
+            );
+          },
+        );
+        return false;
+      }
     } catch (e) {
       NavigationService.hideLoading();
-
       state = state.copyWith(isLoading: false, error: e.toString());
-
       NavigationService.showDialogGlobal(
         dismissLoadingFirst: true,
         builder: (dialogContext) {
@@ -364,6 +363,7 @@ class StackNotifier extends Notifier<StackState> {
           );
         },
       );
+      return false;
     }
   }
 

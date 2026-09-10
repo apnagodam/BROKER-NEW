@@ -5,12 +5,13 @@ import 'package:ag_broker/presentation/providers/withdrawal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class WithdrawalRequestPage extends ConsumerStatefulWidget {
   const WithdrawalRequestPage({super.key});
 
   @override
-  _WithdrawalRequestPageState createState() => _WithdrawalRequestPageState();
+  ConsumerState<WithdrawalRequestPage> createState() => _WithdrawalRequestPageState();
 }
 
 class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
@@ -69,6 +70,16 @@ class _WithdrawalRequestPageState extends ConsumerState<WithdrawalRequestPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar( 
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: Text( 
           localizations.withdrawalRequest,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),

@@ -50,6 +50,7 @@ class SbtState {
     bool? isDeliveryLoading,
     bool? isMatchedOrdersLoading, 
     String? error,
+    bool clearError = false,
     bool? isAuthenticated,
     SbtProductResponse? sbtProductData,
     TradeListModel? tradeListData,
@@ -61,7 +62,7 @@ class SbtState {
       isDeliveryLoading: isDeliveryLoading ?? this.isDeliveryLoading,
       isMatchedOrdersLoading:
           isMatchedOrdersLoading ?? this.isMatchedOrdersLoading,
-      error: error ?? this.error,
+      error: clearError ? null : (error ?? this.error),
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       sbtProductData: sbtProductData ?? this.sbtProductData,
       deliveryCentersData: deliveryCentersData ?? this.deliveryCentersData,
@@ -80,10 +81,14 @@ class SbtNotifier extends Notifier<SbtState> {
   }
 
   Future<void> fetchSbtProducts() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
       final sbtProducts = await repository.getSbtProducts();
-      state = state.copyWith(isLoading: false, sbtProductData: sbtProducts);
+      state = state.copyWith(
+        isLoading: false,
+        sbtProductData: sbtProducts,
+        clearError: true,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -235,7 +240,6 @@ class SbtNotifier extends Notifier<SbtState> {
           Navigator.of(NavigationService.context!).pop();
         }
       } else {
-        state = state.copyWith(error: response['message'] ?? 'Error occurred');
         NavigationService.showDialogGlobal(
           dismissLoadingFirst: true,
           builder: (dialogContext) { 

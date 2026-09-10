@@ -5,6 +5,7 @@ import 'package:ag_broker/presentation/common/auth_providers.dart';
 import 'package:ag_broker/presentation/common/widgets/gradient_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -31,6 +32,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final userDetails = ref.watch(authStateProvider).userDetails;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: Text(localizations.profile),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,

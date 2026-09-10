@@ -792,4 +792,136 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get company => 'कंपनी';
+
+  @override
+  String get dashboard => 'डैशबोर्ड';
+
+  @override
+  String get myClientDeals => 'मेरे ग्राहक सौदे';
+
+  @override
+  String get runningDeals => 'चल रहे सौदे';
+
+  @override
+  String get deliveredDeals => 'वितरित सौदे';
+
+  @override
+  String get members => 'सदस्य';
+
+  @override
+  String get authorisedPerson => 'अधिकृत व्यक्ति';
+
+  @override
+  String get tradingMember => 'ट्रेडिंग सदस्य';
+
+  @override
+  String get addSecurity => 'सुरक्षा जोड़ें';
+
+  @override
+  String get tmFees => 'टीएम फीस';
+
+  @override
+  String get marginFunding => 'मार्जिन फंडिंग';
+
+  @override
+  String get schemes => 'योजनाएं';
+
+  @override
+  String get marginFundingLimit => 'मार्जिन फंडिंग सीमा';
+
+  @override
+  String get marginFundingRequest => 'मार्जिन फंडिंग अनुरोध';
+
+  @override
+  String get wallet => 'वॉलेट';
+
+  @override
+  String get tradePowerStatement => 'ट्रेड पावर विवरण';
+
+  @override
+  String get sbtProduct => 'SBT उत्पाद';
+
+  @override
+  String get sbtSecureProduct => 'SBT सुरक्षित उत्पाद';
+
+  @override
+  String get sbtUnsecureProduct => 'SBT असुरक्षित उत्पाद';
+
+  @override
+  String get client => 'ग्राहक';
+
+  @override
+  String get outwardRequest => 'आउटवर्ड अनुरोध';
+
+  @override
+  String get rejectOutward => 'आउटवर्ड अस्वीकार करें';
+
+  @override
+  String get truckNo => 'ट्रक नं.';
+
+  @override
+  String get driverNo => 'ड्राइवर नं.';
+
+  @override
+  String get deliveryDaysLabel => 'डिलीवरी के दिन';
+
+  @override
+  String get pendingQty => 'लंबित मात्रा (क्विंटल)';
+
+  @override
+  String get deliveredQty => 'वितरित मात्रा (क्विंटल)';
+
+  @override
+  String get weightQtl => 'वजन (क्विंटल)';
+
+  @override
+  String get priceRupees => 'मूल्य (₹)';
+
+  @override
+  String get matchDate => 'मिलान दिनांक';
+
+  @override
+  String get noRunningDeals => 'कोई चल रहा सौदा उपलब्ध नहीं है';
+
+  @override
+  String get noDeliveredDeals => 'कोई वितरित सौदा उपलब्ध नहीं है';
+
+  @override
+  String get buyDeal => 'खरीद';
+
+  @override
+  String get sellDeal => 'विक्रय';
+
+  @override
+  String get buyerClient => 'खरीदार';
+
+  @override
+  String get sellerClient => 'विक्रेता';
+
+  @override
+  String get tapToPlaceOrder => 'ऑर्डर देने के लिए टैप करें';
+
+  @override
+  String get stackNoWithDash => 'स्टैक नं.-';
+
+  @override
+  String get stackSellBid => 'स्टैकसेल बोली';
+
+  @override
+  String get quantityQuintal => 'मात्रा (क्विंटल)';
+
+  @override
+  String get highestBuyer => 'सर्वोच्‍च खरीदार';
+
+  @override
+  String get sellerPriceTitle => 'विक्रेता मूल्य';
+
+  @override
+  String get noBidHistoryAvailable => 'कोई बोली इतिहास उपलब्ध नहीं है';
+
+  @override
+  String get factoryDelivery => 'फैक्ट्री डिलीवरी';
+
+  @override
+  String get warehouseDelivery => 'वेयरहाउस डिलीवरी';
 }

@@ -30,6 +30,7 @@ class RunningDealsResponse {
 class RunningDealItem {
   dynamic id;
   dynamic orderId;
+  dynamic dealType;
   dynamic orderMatchDate;
   dynamic deliveryDays;
   dynamic clientName;
@@ -52,6 +53,7 @@ class RunningDealItem {
   RunningDealItem({
     this.id,
     this.orderId,
+    this.dealType,
     this.orderMatchDate,
     this.deliveryDays,
     this.clientName,
@@ -73,9 +75,36 @@ class RunningDealItem {
   });
 
   factory RunningDealItem.fromJson(Map<dynamic, dynamic> json) {
+    final rawDealType =
+        (json['deal_type'] ?? json['type'] ?? json['dealType'] ?? '').toString();
+    final dTypeLower = rawDealType.toLowerCase();
+
+    final buyer =
+        (json['buyer_name'] ?? json['buyer'] ?? '').toString().trim();
+    final seller =
+        (json['seller_name'] ?? json['seller'] ?? '').toString().trim();
+    final genericClient =
+        (json['client_name'] ?? json['client'] ?? '').toString().trim();
+
+    String resolvedClient = '';
+    if (dTypeLower.contains('sell')) {
+      resolvedClient = seller.isNotEmpty
+          ? seller
+          : (genericClient.isNotEmpty ? genericClient : buyer);
+    } else if (dTypeLower.contains('buy')) {
+      resolvedClient = buyer.isNotEmpty
+          ? buyer
+          : (genericClient.isNotEmpty ? genericClient : seller);
+    } else {
+      resolvedClient = genericClient.isNotEmpty
+          ? genericClient
+          : (buyer.isNotEmpty ? buyer : seller);
+    }
+
     return RunningDealItem(
       id: json['id'] ?? json['order_id'],
       orderId: json['order_id'] ?? json['order_no'] ?? json['id'] ?? '',
+      dealType: rawDealType,
       orderMatchDate:
           json['order_match_date'] ?? json['match_date'] ?? json['date'] ?? '',
       deliveryDays: json['deliveryDays'] ??
@@ -83,12 +112,13 @@ class RunningDealItem {
           json['delivery_date'] ??
           json['days'] ??
           '',
-      clientName: json['buyer_name'] ??
-          json['client_name'] ??
-          json['seller_name'] ??
-          '',
-      buyerName: json['buyer_name'] ?? json['client_name'] ?? '',
-      sellerName: json['seller_name'] ?? '',
+      clientName: resolvedClient,
+      buyerName: buyer.isNotEmpty
+          ? buyer
+          : (dTypeLower.contains('buy') ? genericClient : ''),
+      sellerName: seller.isNotEmpty
+          ? seller
+          : (dTypeLower.contains('sell') ? genericClient : ''),
       productName: json['product_name'] ??
           json['product'] ??
           json['warehouse_name'] ??

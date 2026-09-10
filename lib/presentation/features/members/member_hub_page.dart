@@ -99,6 +99,16 @@ class MembersHubPage extends StatelessWidget {
 
     return Scaffold(  
       appBar: AppBar( 
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: const Text('Members'),
         centerTitle: true,
         backgroundColor: primary,
@@ -129,7 +139,7 @@ class MembersHubPage extends StatelessWidget {
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 8),
                     leading: Container(   
-                      width: 44,
+                    width: 44,
                       height: 44,
                       decoration: BoxDecoration(  
                         color: item.iconBg,
@@ -154,7 +164,7 @@ class MembersHubPage extends StatelessWidget {
                     ),
                     trailing: Icon(Icons.chevron_right, 
                         color: Colors.grey.shade400, size: 22),
-                    onTap: () => context.go(item.route),
+                    onTap: () => context.push(item.route),
                   ),
                 );
               },

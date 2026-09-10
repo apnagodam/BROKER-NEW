@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:ag_broker/l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class BrokerageProfile extends ConsumerStatefulWidget {
   const BrokerageProfile({super.key});
@@ -27,7 +28,20 @@ class _BrokerageProfileState extends ConsumerState<BrokerageProfile> {
     var brokerage = ref.watch(authStateProvider);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: Text(AppLocalizations.of(context)!.brokerageProfile),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Padding(

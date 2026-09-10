@@ -2,6 +2,7 @@ import 'package:ag_broker/core/utils/constants.dart';
 import 'package:ag_broker/core/utils/dio_client.dart';
 import 'package:ag_broker/core/utils/shared_preferences_service.dart';
 import 'package:ag_broker/core/utils/string_constants.dart';
+import 'package:ag_broker/core/utils/product_helper.dart';
 import 'package:ag_broker/domain/entities/matched_orders_model.dart';
 import 'package:ag_broker/domain/entities/quality_params_model.dart';
 import 'package:ag_broker/domain/entities/sbt_product.dart';
@@ -15,7 +16,6 @@ import 'package:ag_broker/presentation/providers/bids_provider.dart';
 import 'package:ag_broker/presentation/providers/locale_provider.dart';
 import 'package:ag_broker/presentation/providers/sbt_provider.dart';
 import 'package:ag_broker/presentation/providers/stack_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -161,7 +161,9 @@ class _HomePageState extends ConsumerState<HomePage>
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (sbtState.error != null && sbtState.error!.isNotEmpty) {
+    final sbtItems = sbtState.sbtProductData?.data ?? [];
+
+    if (sbtState.error != null && sbtState.error!.isNotEmpty && sbtItems.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
@@ -221,8 +223,7 @@ class _HomePageState extends ConsumerState<HomePage>
         ],
       );
     }
-
-    final sbtItems = sbtState.sbtProductData?.data ?? [];
+ 
     if (sbtItems.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -349,7 +350,7 @@ class _HomePageState extends ConsumerState<HomePage>
         localizations,
         index,
       ),
-      separatorBuilder: (context, index) => const Divider(height: 8, thickness: 1),
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
     );
   }
 
@@ -549,118 +550,254 @@ class _HomePageState extends ConsumerState<HomePage>
     AppLocalizations localizations,
     int index,
   ) {
-    final titleText =
-        "${data.commodityName} (${data.warehouseName} ( Stack No.${data.stackNumber} )${data.deliveryDays != null ? ' , Manda Delivery Days :- ${data.deliveryDays}' : ''})";
-    final subTitleText =
-        "${data.warehouseName} ( Stack No.${data.stackNumber} )${data.deliveryDays != null ? ' , Manda Delivery Days :- ${data.deliveryDays}' : ''}";
+    final warehouseName = data.warehouseName ?? '';
+    final commodityName = ProductHelper.cleanCommodityName(data.commodityName, warehouseName);
+    final stackNumber = data.stackNumber?.toString() ?? '';
+    final warehouseAddress = data.warehouseAddress ?? '';
+    final imageUrl = ProductHelper.formatImageUrl(data.commodityImage, data.commodityPath);
+
+    final bool isFactory = ProductHelper.isFactoryDelivery(null, "$warehouseName $warehouseAddress");
+    final Color borderColor = ProductHelper.deliveryBorderColor(isFactory);
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: Colors.amber.shade900, width: 1.5),
-      ),
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: borderColor, width: 2),
+      ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
         onTap: () {
           GoRouter.of(context).push('/stack-details', extra: index);
         },
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Orange Title at top center
-              Text(
-                titleText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber.shade900,
-                  height: 1.3,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              // Sub-title in black
-              Text(
-                subTitleText,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                  height: 1.3,
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // Best Buyer & Best Seller Price Row with Grey Boxes
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top Section with Icon and Information
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Circular Commodity Avatar / Icon
+                  ClipOval(
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      color: const Color(0xFFE8F5E9),
+                      child: imageUrl != null && imageUrl.isNotEmpty
+                          ? Image.network(
+                              imageUrl,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.grain,
+                                  color: Color(0xFF2E7D32),
+                                  size: 28,
+                                );
+                              },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes!
+                                          : null,
+                                      color: const Color(0xFF2E7D32),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : const Icon(
+                              Icons.grain,
+                              color: Color(0xFF2E7D32),
+                              size: 28,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // Details Column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title: <Commodity> Tap to place order + Delivery badge
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "$commodityName ${localizations.tapToPlaceOrder}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            // Container(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            //   decoration: BoxDecoration(
+                            //     color: borderColor.withValues(alpha: 0.08),
+                            //     borderRadius: BorderRadius.circular(12),
+                            //     border: Border.all(color: borderColor, width: 1),
+                            //   ),
+                            //   child: Text(
+                            //     isFactory ? localizations.factoryDelivery : localizations.warehouseDelivery,
+                            //     style: TextStyle(
+                            //       fontSize: 10,
+                            //       fontWeight: FontWeight.bold,
+                            //       color: borderColor,
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+
+                        // Stack No.
+                        if (stackNumber.isNotEmpty)
+                          Text(
+                            "${localizations.stackNo} $stackNumber",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        if (stackNumber.isNotEmpty) const SizedBox(height: 4),
+
+                        // Warehouse Name & Location
+                        if (warehouseName.isNotEmpty)
+                          Text(
+                            warehouseName,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                              height: 1.25,
+                            ),
+                          ),
+                        if (warehouseAddress.isNotEmpty &&
+                            warehouseAddress != warehouseName &&
+                            !warehouseName.toLowerCase().contains(warehouseAddress.toLowerCase()))
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              "($warehouseAddress)",
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade500,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 6),
+
+                        // Bid Time / Schedule
+                        if (data.bidTime != null && data.bidTime.toString().isNotEmpty)
+                          data.bidTime.toString().contains('<')
+                              ? HtmlWidget(
+                                  data.bidTime.toString(),
+                                  textStyle: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                )
+                              : Text(
+                                  data.bidTime.toString(),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                )
+                        else
+                          Text(
+                            "1. Bid Time 01:00 PM\n2. Negotiation Upto 03:00 PM",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade700,
+                              height: 1.3,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Bottom Orange Footer Banner
+            Container(
+              color: const Color(0xFFF25822),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Row(
+                children: [
+                  // Best Buyer
                   Expanded(
                     child: Column(
                       children: [
-                        const Text(
-                          "Best Buyer",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                        Text(
+                          localizations.highestBuyer,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "${data.bestBuyerPrice ?? 0}",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
+                        const SizedBox(height: 2),
+                        Text(
+                          "${data.bestBuyerPrice ?? 0}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 24),
+
+                  // Vertical Divider
+                  Container(
+                    width: 1,
+                    height: 28,
+                    color: Colors.white38,
+                  ),
+
+                  // Seller Price
                   Expanded(
                     child: Column(
                       children: [
-                        const Text(
-                          "Best Seller",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                        Text(
+                          localizations.sellerPriceTitle,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "${data.sellerPrice ?? 0}",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
+                        const SizedBox(height: 2),
+                        Text(
+                          "${data.sellerPrice ?? 0}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -668,206 +805,130 @@ class _HomePageState extends ConsumerState<HomePage>
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
-
-              // Bid Time text center aligned
-              Center(
-                child: data.bidTime.toString().isNotEmpty
-                    ? HtmlWidget(
-                        data.bidTime,
-                        textStyle: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      )
-                    : const Text(
-                        "Bid Time: 11:00 AM To 03:00 PM",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-              ),
-              const SizedBox(height: 14),
-
-              // Solid Dark Green Order Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    GoRouter.of(context).push('/stack-details', extra: index);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2E7D32),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    "Order",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSbtCard(SbtProduct data, AppLocalizations localizations) => Card(
-    elevation: 2,
-    color: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      side: BorderSide(color: Colors.amber.shade900, width: 2),
-    ),
-    margin: EdgeInsets.all(10),
-    surfaceTintColor: Colors.white,
-    child: Padding(   
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Title with district
-          Text.rich(   
-            TextSpan(  
-              text: "${data.commodity} ",
+  Widget _buildSbtCard(SbtProduct data, AppLocalizations localizations) {
+    final bool isFactory = ProductHelper.isFactoryDelivery(data.sbtType, data.district?.toString());
+    final Color borderColor = ProductHelper.deliveryBorderColor(isFactory);
+    final String cleanCommodity = ProductHelper.cleanCommodityName(data.commodity?.toString(), data.district?.toString());
+    final String district = data.district?.toString().trim() ?? '';
+
+    return Card(
+      elevation: 2,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: borderColor, width: 2),
+      ),
+      margin: const EdgeInsets.all(10),
+      surfaceTintColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Delivery Type Badge
+            // Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            //   decoration: BoxDecoration(
+            //     color: borderColor.withValues(alpha: 0.08),
+            //     borderRadius: BorderRadius.circular(20),
+            //     border: Border.all(color: borderColor, width: 1),
+            //   ),
+            //   child: Row(
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Icon(
+            //         isFactory ? Icons.factory_outlined : Icons.warehouse_outlined,
+            //         size: 16,
+            //         color: borderColor,
+            //       ),
+            //       const SizedBox(width: 6),
+            //       Text(
+            //         isFactory ? localizations.factoryDelivery : localizations.warehouseDelivery,
+            //         style: TextStyle(
+            //           fontSize: 12,
+            //           fontWeight: FontWeight.bold,
+            //           color: borderColor,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: 10),
+
+            // Clean Product Title
+            Text(
+              cleanCommodity,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                color: Colors.amber.shade900,
+                fontSize: 17,
+                color: borderColor,
               ),
-              children: [],
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 12),
-          Text.rich(
-            TextSpan(  
-              text: "${data.district}",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
+            if (district.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                district,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+                textAlign: TextAlign.center,
               ),
+            ],
+
+            const SizedBox(height: 12),
+
+            // Buyer/Seller best prices
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildPriceRow(
+                  label: localizations.bestBuyer,
+                  value: '${data.bestBuyer}',
+                ),
+                _buildPriceRow(
+                  label: localizations.bestSeller,
+                  value: data.bestSeller.toString(),
+                ),
+              ],
             ),
-          ),
 
-          SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-          // Buyer/Seller best prices
-          Row(  
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildPriceRow(
-                label: localizations.bestBuyer,
-                value: '${data.bestBuyer}',
-              ),
-              _buildPriceRow(  
-                label: localizations.bestSeller,
-                value: data.bestSeller.toString(),
-              ),
-            ],
-          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Bid Time: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                Text(data.date ?? '', style: const TextStyle(fontSize: 13)),
+              ],
+            ),
+            const SizedBox(height: 12),
 
-          SizedBox(height: 10),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Bid Time: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(data.date ?? ''),
-            ],
-          ),
-          SizedBox(height: 10),
-
-          // Tap for details + Icon and Label
-          Row(  
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [    
-              // Icon(  
-              //   data.data?[mainIndex]
-              //               .sbtType
-              //               .toString() ==
-              //           "2"
-              //       ? Icons.factory
-              //       : data.data?[mainIndex]
-              //                   .sbtType
-              //                   .toString() ==
-              //               "1"
-              //           ? Icons.warehouse
-              //           : Icons.store,
-              //   size: 30,
-              //   color: data
-              //               .data?[
-              //                   mainIndex]
-              //               .sbtType
-              //               .toString() ==
-              //           "2"
-              //       ? Colors
-              //           .amber.shade900
-              //       : data
-              //                   .data?[
-              //                       mainIndex]
-              //                   .sbtType
-              //                   .toString() ==
-              //               "1"
-              //           ? ColorConstant
-              //               .maingreen
-              //           : ColorConstant
-              //               .red500,
-              // ),
-              SizedBox(width: 8),
-              // Text(  
-              //   data.data?[mainIndex]
-              //               .sbtType
-              //               .toString() ==
-              //           "2"
-              //       ? "Outside Warehouse"
-              //           .tr
-              //       : data
-              //                   .data?[
-              //                       mainIndex]
-              //                   .sbtType
-              //                   .toString() ==
-              //               "1"
-              //           ? 'Warehouse'.tr
-              //           : "Outside Warehouse"
-              //               .tr,
-              //   style: TextStyle(
-              //     fontWeight:
-              //         FontWeight.bold,
-              //     fontSize:
-              //         Adaptive.sp(17),
-              //   ),
-              // ),
-            ],
-          ),
-          SizedBox(height: 10),
-
-          SizedBox(    
-            width: double.infinity,
-            child: ElevatedButton(   
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2E7D32),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-              ),
-              child: Text(   
-                localizations.order,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                child: Text(
+                  localizations.order,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
               onPressed: () async {
                 showModalBottomSheet(  
                   context: context,
@@ -920,6 +981,7 @@ class _HomePageState extends ConsumerState<HomePage>
       ),
     ),
   );
+}
 
   Widget _orderBottomSheet(
     SbtProduct data,
@@ -946,11 +1008,11 @@ class _HomePageState extends ConsumerState<HomePage>
                 ),
                 Expanded(
                   child: Text(
-                    "${data.commodity}- ${data.district}",
+                    "${ProductHelper.cleanCommodityName(data.commodity?.toString(), data.district?.toString())} - ${data.district ?? ''}",
                     textAlign: TextAlign.center,
                     style: TextStyle(  
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 18,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
@@ -1094,7 +1156,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         index: index,
                         productId: "${data.productId}",
                         commodityId: "${data.commodityId}",
-                        commodityName: data.commodity,
+                        commodityName: ProductHelper.cleanCommodityName(data.commodity?.toString(), data.district?.toString()),
                         districtName: data.district,
                       ),
                       physics: NeverScrollableScrollPhysics(),
@@ -1143,7 +1205,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         index: index,
                         productId: "${data.productId}",
                         commodityId: "${data.commodityId}",
-                        commodityName: data.commodity,
+                        commodityName: ProductHelper.cleanCommodityName(data.commodity?.toString(), data.district?.toString()),
                         districtName: data.district,
                       ),
                       physics: NeverScrollableScrollPhysics(),
@@ -1871,7 +1933,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 _drawerTile(  
                   context,  
                   icon: Icons.dashboard_outlined,
-                  label: 'Dashboard',
+                  label: localizations.dashboard,
                   iconColor: primary,
                   onTap: () => Navigator.of(context).pop(),
                 ),
@@ -1882,12 +1944,12 @@ class _HomePageState extends ConsumerState<HomePage>
                 _drawerExpandable(
                   context,
                   icon: Icons.home_outlined,
-                  label: 'My Client Deals',
+                  label: localizations.myClientDeals,
                   iconColor: primary,
                   children: [
                     _drawerSubTile(
                       context,
-                      label: 'Running Deals',
+                      label: localizations.runningDeals,
                       icon: Icons.local_shipping_outlined,
                       onTap: () {
                         Navigator.of(context).pop();
@@ -1896,7 +1958,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     ),
                     _drawerSubTile(
                       context,
-                      label: 'Delivered Deals',
+                      label: localizations.deliveredDeals,
                       icon: Icons.local_shipping_outlined,
                       onTap: () {
                         Navigator.of(context).pop();
@@ -1912,7 +1974,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 _drawerExpandable(  
                   context,
                   icon: Icons.person_outline,
-                  label: 'Profile',
+                  label: localizations.profile,
                   iconColor: primary,
                   children: [
                     _drawerSubTile( 
@@ -1920,7 +1982,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       label: localizations.profile,
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/home/profile');
+                        context.push('/home/profile');
                       },
                     ),
                     _drawerSubTile(  
@@ -1928,7 +1990,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       label: localizations.brokerageProfile,
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/home/brokerage-profile');
+                        context.push('/home/brokerage-profile');
                       },
                     ),
                   ],
@@ -1942,7 +2004,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   iconColor: Colors.indigo.shade700,
                   onTap: () {
                     Navigator.of(context).pop();
-                    context.go('/home/bids-history');
+                    context.push('/home/bids-history');
                   },
                 ),
 
@@ -1952,7 +2014,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 _drawerExpandable(
                   context,
                   icon: Icons.people_outline,
-                  label: 'Members',
+                  label: localizations.members,
                   iconColor: primary,
                   children: [
                     // Client List — all roles
@@ -1961,7 +2023,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       label: localizations.lpClientList,
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/home/lp-clients');
+                        context.push('/home/lp-clients');
                       },
                     ),
 
@@ -1969,10 +2031,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     if (memberType == 2 || memberType == 3)
                       _drawerSubTile(  
                         context,
-                        label: 'Authorised Person',
+                        label: localizations.authorisedPerson,
                         onTap: () {  
                           Navigator.of(context).pop();
-                          context.go('/home/authorised-person');
+                          context.push('/home/authorised-person');
                         },
                       ),
 
@@ -1980,10 +2042,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     if (memberType == 3)
                       _drawerSubTile(  
                         context,
-                        label: 'Trading Member',
+                        label: localizations.tradingMember,
                         onTap: () {
                           Navigator.of(context).pop();
-                          context.go('/home/trading-member');
+                          context.push('/home/trading-member');
                         },
                       ),
 
@@ -1991,10 +2053,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     if (memberType == 2)
                       _drawerSubTile(   
                         context,
-                        label: 'Add Security',
+                        label: localizations.addSecurity,
                         onTap: () {
                           Navigator.of(context).pop();
-                          context.go('/home/add-security');
+                          context.push('/home/add-security');
                         },
                       ),
 
@@ -2002,10 +2064,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     if (memberType == 2)
                       _drawerSubTile(   
                         context,
-                        label: 'TM Fees',
+                        label: localizations.tmFees,
                         onTap: () {
                           Navigator.of(context).pop();
-                          context.go('/home/tm-fees');
+                          context.push('/home/tm-fees');
                         },
                       ),
                   ],
@@ -2016,31 +2078,31 @@ class _HomePageState extends ConsumerState<HomePage>
                   _drawerExpandable(  
                     context,
                     icon: Icons.percent_outlined,
-                    label: 'Margin Funding',
+                    label: localizations.marginFunding,
                     iconColor: Colors.green.shade700,
                     children: [
                       _drawerSubTile(
                         context,
-                        label: 'Schemes',
+                        label: localizations.schemes,
                         onTap: () {   
                           Navigator.of(context).pop();
-                          context.go('/home/margin-funding-schemes');
+                          context.push('/home/margin-funding-schemes');
                         },
                       ),
                       _drawerSubTile( 
                         context,
-                        label: 'Margin Funding Limit',
+                        label: localizations.marginFundingLimit,
                         onTap: () { 
                           Navigator.of(context).pop();
-                          context.go('/home/margin-funding-limit');
+                          context.push('/home/margin-funding-limit');
                         },
                       ),
                       _drawerSubTile(     
                         context, 
-                        label: 'Margin Funding Request',
+                        label: localizations.marginFundingRequest,
                         onTap: () {    
                           Navigator.of(context).pop();
-                          context.go('/home/margin-funding-request');
+                          context.push('/home/margin-funding-request');
                         },
                       ),
                     ],
@@ -2050,7 +2112,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 _drawerExpandable(   
                   context,
                   icon: Icons.account_balance_wallet_outlined,
-                  label: 'Wallet',
+                  label: localizations.wallet,
                   iconColor: Colors.orange.shade800,
                   children: [
                     // Brokerage Wallet Statement — all roles
@@ -2059,7 +2121,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       label: localizations.walletStatement,
                       onTap: () {   
                         Navigator.of(context).pop();
-                        context.go('/home/wallet-statement');
+                        context.push('/home/wallet-statement');
                       },
                     ),
 
@@ -2067,10 +2129,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     if (memberType == 2 || memberType == 3)
                       _drawerSubTile(  
                         context,
-                        label: 'Trade Power Statement',
+                        label: localizations.tradePowerStatement,
                         onTap: () { 
                           Navigator.of(context).pop();
-                          context.go('/home/trade-power-statement');
+                          context.push('/home/trade-power-statement');
                         },
                       ),
 
@@ -2080,7 +2142,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       label: localizations.withdrawalRequest,
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/home/withdrawal-request');
+                        context.push('/home/withdrawal-request');
                       },
                     ),
                   ],
@@ -2090,23 +2152,23 @@ class _HomePageState extends ConsumerState<HomePage>
                 _drawerExpandable(  
                   context,
                   icon: Icons.verified_outlined,
-                  label: 'SBT Product',
+                  label: localizations.sbtProduct,
                   iconColor: Colors.green.shade800,
                   children: [
                     _drawerSubTile(  
                       context,
-                      label: 'SBT Secure Product',
+                      label: localizations.sbtSecureProduct,
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/home/sbt-secure-product');
+                        context.push('/home/sbt-secure-product');
                       },
                     ),
                     _drawerSubTile(
                       context,
-                      label: 'SBT Unsecure Product',
+                      label: localizations.sbtUnsecureProduct,
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/home/sbt-unsecure-product');
+                        context.push('/home/sbt-unsecure-product');
                       },
                     ),
                   ],

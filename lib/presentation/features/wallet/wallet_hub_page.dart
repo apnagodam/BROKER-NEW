@@ -48,6 +48,16 @@ class WalletHubPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: const Text('Wallet'),
         centerTitle: true,
         backgroundColor: primary,
@@ -94,7 +104,7 @@ class WalletHubPage extends StatelessWidget {
               ),
               trailing: Icon(Icons.chevron_right,
                   color: Colors.grey.shade400, size: 22),
-              onTap: () => context.go(item.route),
+              onTap: () => context.push(item.route),
             ),
           );
         },

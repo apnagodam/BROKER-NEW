@@ -36,6 +36,16 @@ class _LpClientListPageState extends ConsumerState<LpClientListPage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: Text(
           localizations.lpClientList,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),

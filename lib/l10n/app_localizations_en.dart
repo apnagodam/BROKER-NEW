@@ -792,4 +792,136 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get company => 'Company';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get myClientDeals => 'My Client Deals';
+
+  @override
+  String get runningDeals => 'Running Deals';
+
+  @override
+  String get deliveredDeals => 'Delivered Deals';
+
+  @override
+  String get members => 'Members';
+
+  @override
+  String get authorisedPerson => 'Authorised Person';
+
+  @override
+  String get tradingMember => 'Trading Member';
+
+  @override
+  String get addSecurity => 'Add Security';
+
+  @override
+  String get tmFees => 'TM Fees';
+
+  @override
+  String get marginFunding => 'Margin Funding';
+
+  @override
+  String get schemes => 'Schemes';
+
+  @override
+  String get marginFundingLimit => 'Margin Funding Limit';
+
+  @override
+  String get marginFundingRequest => 'Margin Funding Request';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
+  String get tradePowerStatement => 'Trade Power Statement';
+
+  @override
+  String get sbtProduct => 'SBT Product';
+
+  @override
+  String get sbtSecureProduct => 'SBT Secure Product';
+
+  @override
+  String get sbtUnsecureProduct => 'SBT Unsecure Product';
+
+  @override
+  String get client => 'Client';
+
+  @override
+  String get outwardRequest => 'Outward Request';
+
+  @override
+  String get rejectOutward => 'Reject Outward';
+
+  @override
+  String get truckNo => 'Truck No.';
+
+  @override
+  String get driverNo => 'Driver No.';
+
+  @override
+  String get deliveryDaysLabel => 'Delivery Days';
+
+  @override
+  String get pendingQty => 'Pending (Qtl.)';
+
+  @override
+  String get deliveredQty => 'Delivered (Qtl.)';
+
+  @override
+  String get weightQtl => 'Weight (Qtl.)';
+
+  @override
+  String get priceRupees => 'Price (₹)';
+
+  @override
+  String get matchDate => 'Match Date';
+
+  @override
+  String get noRunningDeals => 'No running deals available';
+
+  @override
+  String get noDeliveredDeals => 'No delivered deals available';
+
+  @override
+  String get buyDeal => 'BUY';
+
+  @override
+  String get sellDeal => 'SELL';
+
+  @override
+  String get buyerClient => 'Buyer';
+
+  @override
+  String get sellerClient => 'Seller';
+
+  @override
+  String get tapToPlaceOrder => 'Tap to place order';
+
+  @override
+  String get stackNoWithDash => 'Stack No.-';
+
+  @override
+  String get stackSellBid => 'Stack Sell Bid';
+
+  @override
+  String get quantityQuintal => 'Quantity (Qtl)';
+
+  @override
+  String get highestBuyer => 'Best Buyer';
+
+  @override
+  String get sellerPriceTitle => 'Seller Price';
+
+  @override
+  String get noBidHistoryAvailable => 'No bid history available';
+
+  @override
+  String get factoryDelivery => 'Factory Delivery';
+
+  @override
+  String get warehouseDelivery => 'Warehouse Delivery';
 }

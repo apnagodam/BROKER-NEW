@@ -6,13 +6,14 @@ import 'package:ag_broker/presentation/common/widgets/gradient_info_card.dart';
 import 'package:ag_broker/presentation/providers/wallet_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class WalletStatementPage extends ConsumerStatefulWidget {
   const WalletStatementPage({super.key});
 
   @override
-  _WalletStatementPageState createState() => _WalletStatementPageState();
+  ConsumerState<WalletStatementPage> createState() => _WalletStatementPageState();
 }
 
 class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {   
@@ -51,6 +52,16 @@ class _WalletStatementPageState extends ConsumerState<WalletStatementPage> {
     return Scaffold(  
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: Text(
           localizations.walletStatement,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),

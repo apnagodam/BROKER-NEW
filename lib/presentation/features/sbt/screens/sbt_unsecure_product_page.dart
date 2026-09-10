@@ -1,4 +1,6 @@
+import 'package:ag_broker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SbtUnsecureProduct {
   final int srNo;
@@ -137,12 +139,24 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        title: const Text(
-          'SBT Unsecure Products',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
+        title: Text(
+          localizations?.sbtUnsecureProduct ?? 'SBT Unsecure Products',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF7B3F00),

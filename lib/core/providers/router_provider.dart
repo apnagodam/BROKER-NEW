@@ -10,11 +10,14 @@ import 'package:ag_broker/presentation/marging/scheme_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ag_broker/presentation/features/sbt/screens/sbt_secure_product_page.dart';
+import 'package:ag_broker/presentation/features/sbt/screens/sbt_unsecure_product_page.dart';
 import 'package:ag_broker/presentation/features/auth/login/login_page.dart';
 import 'package:ag_broker/presentation/features/auth/login/otp_verification_page.dart';
 import 'package:ag_broker/presentation/features/home/home_page.dart';
 import 'package:ag_broker/presentation/features/profile/profile_page.dart';
 import 'package:ag_broker/presentation/features/truck_load/truck_load_details_screen.dart';
+import 'package:ag_broker/presentation/features/truck_load/submit_bid_screen.dart';
 import 'package:ag_broker/presentation/features/lp_clients/lp_client_list_page.dart';
 import 'package:ag_broker/presentation/features/lp_clients/add_lp_client_page.dart';
 import 'package:ag_broker/presentation/features/bids/bids_history_page.dart';
@@ -65,6 +68,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final stackData = state.extra as int;
           return TruckLoadDetailsScreen(index: stackData);
+        },
+      ),
+      GoRoute(
+        path: '/submit-bid',
+        builder: (context, state) {
+          final index = state.extra as int;
+          return SubmitBidScreen(index: index);
         },
       ),
 
@@ -163,6 +173,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/home/margin-funding-request',
         builder: (context, state) =>
             const _PlaceholderPage(title: 'Margin Funding Request'),
+      ),
+      GoRoute(
+        path: '/home/sbt-secure-product',
+        builder: (context, state) => const SbtSecureProductPage(),
+      ),
+      GoRoute(
+        path: '/home/sbt-unsecure-product',
+        builder: (context, state) => const SbtUnsecureProductPage(),
+      ),
+      GoRoute(
+        path: '/home/trading-member',
+        builder: (context, state) =>
+            const _PlaceholderPage(title: 'Trading Member'),
       ),
     ],
     redirect: (context, state) {   

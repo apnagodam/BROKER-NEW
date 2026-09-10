@@ -40,9 +40,9 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
             }
           },
         ),
-        title: const Text(
-          "Running Deals",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          localizations.runningDeals,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF2E7D32),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -71,7 +71,7 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                "No Running Deals Found",
+                                localizations.noRunningDeals,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -117,11 +117,13 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
     RunningDealItem item,
     AppLocalizations localizations,
   ) {
+    final isSell = item.dealType.toString().toLowerCase().contains('sell');
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: Colors.grey.shade300),
       ),
       child: Padding(
@@ -129,9 +131,10 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Order ID & Action Header
+            // ── Top Header: Order ID (Left) & BUY/SELL Badge (Right) ─────────
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Flexible(
                   child: Container(
@@ -142,103 +145,279 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
                     decoration: BoxDecoration(
                       color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.green.shade300),
-                    ),
-                    child: Text(
-                      "Order ID: ${item.orderId}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: Color(0xFF2E7D32),
+                      border: Border.all(
+                        color: Colors.green.shade400,
+                        width: 1.0,
                       ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.tag,
+                          size: 14,
+                          color: Color(0xFF2E7D32),
+                        ),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            "${localizations.orderId}: ${item.orderId}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                              color: Color(0xFF1B5E20),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                if (item.orderMatchDate.toString().isNotEmpty) ...[
-                  const SizedBox(width: 6),
-                  Flexible(
+                if (item.dealType.toString().isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSell
+                          ? Colors.orange.shade50
+                          : Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: isSell
+                            ? Colors.orange.shade300
+                            : Colors.blue.shade300,
+                        width: 1,
+                      ),
+                    ),
                     child: Text(
-                      "Match: ${item.orderMatchDate}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
+                      isSell
+                          ? localizations.sellDeal
+                          : localizations.buyDeal,
                       style: TextStyle(
+                        fontWeight: FontWeight.bold,
                         fontSize: 11,
-                        color: Colors.grey.shade600,
+                        color: isSell
+                            ? Colors.orange.shade900
+                            : Colors.blue.shade900,
                       ),
                     ),
                   ),
                 ],
               ],
             ),
+
+            // ── Match Date (Row 2) ──────────────────────────────────────────
+            if (item.orderMatchDate.toString().isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Icon(
+                    Icons.event_outlined,
+                    size: 13,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "${localizations.matchDate}: ${item.orderMatchDate}",
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+
             const SizedBox(height: 10),
 
-            // Client Name & Product Name
-            if (item.clientName.toString().isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  "Client: ${item.clientName}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.black87,
+            // ── Client Name & Warehouse ─────────────────────────────────────
+            if (item.buyerName.toString().isNotEmpty &&
+                item.sellerName.toString().isNotEmpty &&
+                item.buyerName.toString() != item.sellerName.toString()) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.person_outline,
+                    size: 15,
+                    color: Color(0xFF2E7D32),
                   ),
-                ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "${localizations.buyerClient}: ",
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(text: "${item.buyerName}"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-
-            if (item.productName.toString().isNotEmpty)
-              Text(
-                "${item.productName}",
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade700,
-                  height: 1.2,
-                ),
+              const SizedBox(height: 3),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.storefront_outlined,
+                    size: 15,
+                    color: Colors.orange.shade800,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade800,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "${localizations.sellerClient}: ",
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(text: "${item.sellerName}"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
+            ] else if (item.clientName.toString().isNotEmpty) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.person_outline,
+                    size: 15,
+                    color: Color(0xFF2E7D32),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "${localizations.client}: ",
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(text: "${item.clientName}"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
 
-            const Divider(height: 20),
+            if (item.productName.toString().isNotEmpty) ...[
+              const SizedBox(height: 5),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.warehouse_outlined,
+                    size: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      "${item.productName}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
 
-            // Deal metrics grid
-            Row(
-              children: [
-                Expanded(
-                  child: _buildMetricTile(
-                    label: "Commodity",
-                    value:
-                        "${item.commodity.toString().isNotEmpty ? item.commodity : item.commodityName}",
+            // ── Deal Metrics Box ────────────────────────────────────────────
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildMetricTile(
+                          label: localizations.commodity,
+                          value:
+                              "${item.commodity.toString().isNotEmpty ? item.commodity : item.commodityName}",
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 28,
+                        color: Colors.grey.shade300,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildMetricTile(
+                          label: localizations.priceRupees,
+                          value: "₹${item.price}",
+                          valueColor: const Color(0xFF2E7D32),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Expanded(
-                  child: _buildMetricTile(
-                    label: "Price (₹)",
-                    value: "₹${item.price}",
-                    valueColor: const Color(0xFF2E7D32),
+                  const Divider(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildMetricTile(
+                          label: localizations.weightQtl,
+                          value: "${item.weight} ${localizations.quintal}",
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 28,
+                        color: Colors.grey.shade300,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildMetricTile(
+                          label: localizations.deliveredQty,
+                          value:
+                              "${item.deliveredWeight} ${localizations.quintal}",
+                          valueColor: Colors.amber.shade900,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildMetricTile(
-                    label: "Weight (Qtl.)",
-                    value: "${item.weight} Qtl.",
-                  ),
-                ),
-                Expanded(
-                  child: _buildMetricTile(
-                    label: "Delivered (Qtl.)",
-                    value: "${item.deliveredWeight} Qtl.",
-                    valueColor: Colors.amber.shade900,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             if (item.deliveryDays.toString().isNotEmpty) ...[
@@ -246,13 +425,13 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
               Row(
                 children: [
                   const Icon(
-                    Icons.calendar_today,
+                    Icons.schedule,
                     size: 14,
                     color: Colors.grey,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    "Delivery Days: ${item.deliveryDays}",
+                    "${localizations.deliveryDaysLabel}: ${item.deliveryDays}",
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade700,
@@ -272,9 +451,9 @@ class _RunningDealsPageState extends ConsumerState<RunningDealsPage> {
                       onPressed: () =>
                           _showOutwardRequestDialog(context, ref, item),
                       icon: const Icon(Icons.add_circle_outline, size: 16),
-                      label: const Text(
-                        "Send Outward Request",
-                        style: TextStyle(
+                      label: Text(
+                        localizations.outwardRequest,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),

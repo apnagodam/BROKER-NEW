@@ -3,6 +3,7 @@ import 'package:ag_broker/l10n/app_localizations.dart';
 import 'package:ag_broker/presentation/providers/bids_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class BidsHistoryPage extends ConsumerStatefulWidget {
@@ -49,6 +50,16 @@ class _BidsHistoryPageState extends ConsumerState<BidsHistoryPage>
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+        ),
         title: Text(
           localizations.bidsHistory,
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),

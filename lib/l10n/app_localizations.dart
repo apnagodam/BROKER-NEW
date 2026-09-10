@@ -1609,6 +1609,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Company'**
   String get company;
+
+  /// No description provided for @dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// No description provided for @myClientDeals.
+  ///
+  /// In en, this message translates to:
+  /// **'My Client Deals'**
+  String get myClientDeals;
+
+  /// No description provided for @runningDeals.
+  ///
+  /// In en, this message translates to:
+  /// **'Running Deals'**
+  String get runningDeals;
+
+  /// No description provided for @deliveredDeals.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered Deals'**
+  String get deliveredDeals;
+
+  /// No description provided for @members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get members;
+
+  /// No description provided for @authorisedPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorised Person'**
+  String get authorisedPerson;
+
+  /// No description provided for @tradingMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading Member'**
+  String get tradingMember;
+
+  /// No description provided for @addSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Security'**
+  String get addSecurity;
+
+  /// No description provided for @tmFees.
+  ///
+  /// In en, this message translates to:
+  /// **'TM Fees'**
+  String get tmFees;
+
+  /// No description provided for @marginFunding.
+  ///
+  /// In en, this message translates to:
+  /// **'Margin Funding'**
+  String get marginFunding;
+
+  /// No description provided for @schemes.
+  ///
+  /// In en, this message translates to:
+  /// **'Schemes'**
+  String get schemes;
+
+  /// No description provided for @marginFundingLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Margin Funding Limit'**
+  String get marginFundingLimit;
+
+  /// No description provided for @marginFundingRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Margin Funding Request'**
+  String get marginFundingRequest;
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
+  /// No description provided for @tradePowerStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade Power Statement'**
+  String get tradePowerStatement;
+
+  /// No description provided for @sbtProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'SBT Product'**
+  String get sbtProduct;
+
+  /// No description provided for @sbtSecureProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'SBT Secure Product'**
+  String get sbtSecureProduct;
+
+  /// No description provided for @sbtUnsecureProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'SBT Unsecure Product'**
+  String get sbtUnsecureProduct;
+
+  /// No description provided for @client.
+  ///
+  /// In en, this message translates to:
+  /// **'Client'**
+  String get client;
+
+  /// No description provided for @outwardRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Outward Request'**
+  String get outwardRequest;
+
+  /// No description provided for @rejectOutward.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Outward'**
+  String get rejectOutward;
+
+  /// No description provided for @truckNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Truck No.'**
+  String get truckNo;
+
+  /// No description provided for @driverNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver No.'**
+  String get driverNo;
+
+  /// No description provided for @deliveryDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Days'**
+  String get deliveryDaysLabel;
+
+  /// No description provided for @pendingQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending (Qtl.)'**
+  String get pendingQty;
+
+  /// No description provided for @deliveredQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered (Qtl.)'**
+  String get deliveredQty;
+
+  /// No description provided for @weightQtl.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (Qtl.)'**
+  String get weightQtl;
+
+  /// No description provided for @priceRupees.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (₹)'**
+  String get priceRupees;
+
+  /// No description provided for @matchDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Match Date'**
+  String get matchDate;
+
+  /// No description provided for @noRunningDeals.
+  ///
+  /// In en, this message translates to:
+  /// **'No running deals available'**
+  String get noRunningDeals;
+
+  /// No description provided for @noDeliveredDeals.
+  ///
+  /// In en, this message translates to:
+  /// **'No delivered deals available'**
+  String get noDeliveredDeals;
+
+  /// No description provided for @buyDeal.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY'**
+  String get buyDeal;
+
+  /// No description provided for @sellDeal.
+  ///
+  /// In en, this message translates to:
+  /// **'SELL'**
+  String get sellDeal;
+
+  /// No description provided for @buyerClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get buyerClient;
+
+  /// No description provided for @sellerClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller'**
+  String get sellerClient;
+
+  /// No description provided for @tapToPlaceOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to place order'**
+  String get tapToPlaceOrder;
+
+  /// No description provided for @stackNoWithDash.
+  ///
+  /// In en, this message translates to:
+  /// **'Stack No.-'**
+  String get stackNoWithDash;
+
+  /// No description provided for @stackSellBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Stack Sell Bid'**
+  String get stackSellBid;
+
+  /// No description provided for @quantityQuintal.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity (Qtl)'**
+  String get quantityQuintal;
+
+  /// No description provided for @highestBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Buyer'**
+  String get highestBuyer;
+
+  /// No description provided for @sellerPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller Price'**
+  String get sellerPriceTitle;
+
+  /// No description provided for @noBidHistoryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No bid history available'**
+  String get noBidHistoryAvailable;
+
+  /// No description provided for @factoryDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Factory Delivery'**
+  String get factoryDelivery;
+
+  /// No description provided for @warehouseDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse Delivery'**
+  String get warehouseDelivery;
 }
 
 class _AppLocalizationsDelegate
