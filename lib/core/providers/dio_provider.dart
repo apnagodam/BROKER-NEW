@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: Constants.testApiBaseUrl,
+      baseUrl: Constants.apiBaseUrl,
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       headers: {

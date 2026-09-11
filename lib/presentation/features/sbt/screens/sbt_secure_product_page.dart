@@ -1,127 +1,31 @@
+import 'package:ag_broker/core/utils/product_helper.dart';
+import 'package:ag_broker/domain/entities/sbt_product.dart';
 import 'package:ag_broker/l10n/app_localizations.dart';
+import 'package:ag_broker/presentation/providers/sbt_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SbtSecureProduct {
-  final int srNo;
-  final String commodity;
-  final String district;
-  final double lowerCircuit;
-  final double upperCircuit;
-  final double quantityLimit;
-  final int deliveryDays;
-  final String expiryDate;
-  final double penalty;
-  final double sellerMargin;
-  final double buyerMargin;
-
-  const SbtSecureProduct({
-    required this.srNo,
-    required this.commodity,
-    required this.district,
-    required this.lowerCircuit,
-    required this.upperCircuit,
-    required this.quantityLimit,
-    required this.deliveryDays,
-    required this.expiryDate,
-    required this.penalty,
-    required this.sellerMargin,
-    required this.buyerMargin,
-  });
-}
-
-const List<SbtSecureProduct> _sampleProducts = [
-  SbtSecureProduct(
-    srNo: 1,
-    commodity: 'Chana',
-    district: 'Ajmer',
-    lowerCircuit: 5200,
-    upperCircuit: 5800,
-    quantityLimit: 5000,
-    deliveryDays: 7,
-    expiryDate: '24-3-2026',
-    penalty: 3,
-    sellerMargin: 8,
-    buyerMargin: 8,
-  ),
-  SbtSecureProduct(
-    srNo: 2,
-    commodity: 'Maize',
-    district: 'Madhepura',
-    lowerCircuit: 1850,
-    upperCircuit: 2050,
-    quantityLimit: 20000,
-    deliveryDays: 5,
-    expiryDate: '21-05-2026',
-    penalty: 1,
-    sellerMargin: 0,
-    buyerMargin: 0,
-  ),
-  SbtSecureProduct(
-    srNo: 3,
-    commodity: 'Maize',
-    district: 'Khagaria',
-    lowerCircuit: 1850,
-    upperCircuit: 2050,
-    quantityLimit: 20000,
-    deliveryDays: 5,
-    expiryDate: '30-5-2026',
-    penalty: 1,
-    sellerMargin: 0,
-    buyerMargin: 0,
-  ),
-  SbtSecureProduct(
-    srNo: 4,
-    commodity: 'Maize',
-    district: 'Bhagalpur',
-    lowerCircuit: 1850,
-    upperCircuit: 2050,
-    quantityLimit: 20000,
-    deliveryDays: 5,
-    expiryDate: '30-5-2026',
-    penalty: 1,
-    sellerMargin: 0,
-    buyerMargin: 0,
-  ),
-  SbtSecureProduct(
-    srNo: 5,
-    commodity: 'Maize',
-    district: 'Begusarai',
-    lowerCircuit: 1850,
-    upperCircuit: 2050,
-    quantityLimit: 20000,
-    deliveryDays: 5,
-    expiryDate: '30-5-2026',
-    penalty: 1,
-    sellerMargin: 0,
-    buyerMargin: 0,
-  ),
-];
-
-class SbtSecureProductPage extends StatefulWidget {
+class SbtSecureProductPage extends ConsumerStatefulWidget {
   const SbtSecureProductPage({super.key});
 
   @override
-  State<SbtSecureProductPage> createState() => _SbtSecureProductPageState();
+  ConsumerState<SbtSecureProductPage> createState() =>
+      _SbtSecureProductPageState();
 }
 
-class _SbtSecureProductPageState extends State<SbtSecureProductPage> {
+class _SbtSecureProductPageState extends ConsumerState<SbtSecureProductPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<SbtSecureProduct> _filtered = _sampleProducts;
 
   @override
-  void initState() {  
+  void initState() {
     super.initState();
-    _searchController.addListener(_onSearch);
-  }
-
-  void _onSearch() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {  
-      _filtered = _sampleProducts.where((p) {
-        return p.commodity.toLowerCase().contains(query) ||
-            p.district.toLowerCase().contains(query);
-      }).toList();
+    _searchController.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final sbtState = ref.read(sbtStateProvider);
+      if (sbtState.sbtProductData == null) {
+        ref.read(sbtStateProvider.notifier).fetchSbtProducts();
+      }
     });
   }
 
@@ -134,6 +38,25 @@ class _SbtSecureProductPageState extends State<SbtSecureProductPage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
+    final sbtState = ref.watch(sbtStateProvider);
+
+    final allProducts = sbtState.sbtProductData?.data ?? [];
+    // Filter for Warehouse (Secure) SBT products: sbt_type == 1 or not factory
+    final warehouseProducts = allProducts.where((p) {
+      return !ProductHelper.isFactoryDelivery(
+        p.sbtType,
+        p.district?.toString(),
+      );
+    }).toList();
+
+    final query = _searchController.text.trim().toLowerCase();
+    final filtered = query.isEmpty
+        ? warehouseProducts
+        : warehouseProducts.where((p) {
+            final commodity = (p.commodity ?? '').toString().toLowerCase();
+            final district = (p.district ?? '').toString().toLowerCase();
+            return commodity.contains(query) || district.contains(query);
+          }).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
@@ -160,29 +83,7 @@ class _SbtSecureProductPageState extends State<SbtSecureProductPage> {
       body: Column(
         children: [
           // Breadcrumb
-          Container(
-            width: double.infinity,
-            color: const Color(0xFF1A6B3C).withValues(alpha: 0.08),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: const [
-                Icon(Icons.home_outlined, size: 14, color: Color(0xFF1A6B3C)),
-                SizedBox(width: 4),
-                Text('Home', style: TextStyle(fontSize: 12, color: Color(0xFF1A6B3C))),
-                Text(' / ', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                Text(
-                  'SBT Secure Products',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF1A6B3C),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
             child: TextField(
@@ -212,41 +113,121 @@ class _SbtSecureProductPageState extends State<SbtSecureProductPage> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF1A6B3C), width: 1.5),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF1A6B3C),
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),
           ),
 
-          // Count label
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Showing ${_filtered.length} of ${_sampleProducts.length} entries',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ),
-          ),
 
-          // Cards list
           Expanded(
-            child: _filtered.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No products found.',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                    itemCount: _filtered.length,
-                    itemBuilder: (context, index) {
-                      final p = _filtered[index];
-                      return _ProductCard(product: p);
-                    },
-                  ),
+            child: RefreshIndicator(
+              color: const Color(0xFF1A6B3C),
+              onRefresh: () async {
+                await ref
+                    .read(sbtStateProvider.notifier)
+                    .fetchSbtProducts();
+              },
+              child: sbtState.isLoading && warehouseProducts.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF1A6B3C),
+                      ),
+                    )
+                  : sbtState.error != null && warehouseProducts.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline_rounded,
+                                  size: 48,
+                                  color: Colors.red.shade400,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  sbtState.error!,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  onPressed: () => ref
+                                      .read(sbtStateProvider.notifier)
+                                      .fetchSbtProducts(),
+                                  icon: const Icon(Icons.refresh),
+                                  label: Text(
+                                    localizations?.retry ?? 'Retry',
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        const Color(0xFF1A6B3C),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : filtered.isEmpty
+                          ? ListView(
+                              physics:
+                                  const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.warehouse_outlined,
+                                          size: 56,
+                                          color: Colors.grey.shade400,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          warehouseProducts.isEmpty
+                                              ? (localizations
+                                                      ?.noDataAvailable ??
+                                                  'No warehouse SBT products available.')
+                                              : 'No matching products found.',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ListView.builder(
+                              physics:
+                                  const AlwaysScrollableScrollPhysics(),
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final p = filtered[index];
+                                return _ProductCard(
+                                  product: p,
+                                  index: index + 1,
+                                );
+                              },
+                            ),
+            ),
           ),
         ],
       ),
@@ -255,12 +236,31 @@ class _SbtSecureProductPageState extends State<SbtSecureProductPage> {
 }
 
 class _ProductCard extends StatelessWidget {
-  final SbtSecureProduct product;
+  final SbtProduct product;
+  final int index;
 
-  const _ProductCard({required this.product});
+  const _ProductCard({
+    required this.product,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final cleanCommodity = ProductHelper.cleanCommodityName(
+      product.commodity?.toString(),
+      product.district?.toString(),
+    );
+    final cleanLocation = ProductHelper.extractLocation(
+      product.district?.toString(),
+    );
+    final deliveryDays = ProductHelper.extractDeliveryDays(
+      product.district?.toString(),
+    );
+    final scheduleTime = ProductHelper.formatBidTime(
+      product.date,
+      product.bidTime,
+    );
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -274,7 +274,7 @@ class _ProductCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column( 
+      child: Column(
         children: [
           // Card Header
           Container(
@@ -285,14 +285,17 @@ class _ProductCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(  
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Text(  
-                    '#${product.srNo}',
+                  child: Text(
+                    "#$index",
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -301,9 +304,11 @@ class _ProductCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(  
-                  child: Text(  
-                    product.commodity,
+                Expanded(
+                  child: Text(
+                    cleanCommodity.isNotEmpty
+                        ? cleanCommodity
+                        : (product.commodity?.toString() ?? '-'),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -311,39 +316,53 @@ class _ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Row(  
-                  children: [    
-                    const Icon(Icons.location_on_outlined, color: Colors.white70, size: 14),
-                    const SizedBox(width: 3),
-                    Text(  
-                      product.district,
-                      style: const TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
-                  ],
-                ),
+                if (cleanLocation.isNotEmpty)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        color: Colors.white70,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 3),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 120),
+                        child: Text(
+                          cleanLocation,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
 
           // Circuit prices
-          Padding(   
+          Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Row(
-              children: [  
-                Expanded(  
-                  child: _CircuitBox(   
+              children: [
+                Expanded(
+                  child: _CircuitBox(
                     label: 'Lower Circuit',
-                    value: '₹${product.lowerCircuit.toInt()}/QTL',
+                    value: '₹${product.lowerCircuit ?? '-'}/QTL',
                     color: const Color(0xFFE8F5E9),
                     textColor: const Color(0xFF2E7D32),
                     icon: Icons.arrow_downward,
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(   
-                  child: _CircuitBox(  
+                Expanded(
+                  child: _CircuitBox(
                     label: 'Upper Circuit',
-                    value: '₹${product.upperCircuit.toInt()}/QTL',
+                    value: '₹${product.upperCircuit ?? '-'}/QTL',
                     color: const Color(0xFFFFF3E0),
                     textColor: const Color(0xFFE65100),
                     icon: Icons.arrow_upward,
@@ -353,63 +372,110 @@ class _ProductCard extends StatelessWidget {
             ),
           ),
 
+          // Full-width Bid Time Banner
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F9FA),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.access_time_rounded,
+                    size: 15,
+                    color: Color(0xFF1A6B3C),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Bid Time: ',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      scheduleTime,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           // Details grid
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-            child: Column(   
-              children: [  
-                Row(   
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    Expanded(  
-                      child: _InfoTile(  
+                    Expanded(
+                      child: _InfoTile(
                         icon: Icons.inventory_2_outlined,
                         label: 'Qty Limit',
-                        value: '${product.quantityLimit.toInt()} QTL',
+                        value: '${product.quantityLimit ?? '-'} QTL',
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Expanded(  
-                      child: _InfoTile(  
+                    Expanded(
+                      child: _InfoTile(
                         icon: Icons.local_shipping_outlined,
                         label: 'Delivery',
-                        value: '${product.deliveryDays} Days',
+                        value: deliveryDays,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Expanded(   
-                      child: _InfoTile(   
-                        icon: Icons.calendar_today_outlined,
-                        label: 'Expiry',
-                        value: product.expiryDate,
+                    Expanded(
+                      child: _InfoTile(
+                        icon: Icons.price_check_outlined,
+                        label: 'LTP',
+                        value: product.ltp != null
+                            ? '₹${product.ltp}'
+                            : '-',
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  children: [     
-                    Expanded(   
-                      child: _InfoTile(  
-                        icon: Icons.gavel_outlined,
-                        label: 'Penalty',
-                        value: '${product.penalty.toInt()}%',
-                        highlight: product.penalty > 1,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(  
+                  children: [
+                    Expanded(
                       child: _InfoTile(
-                        icon: Icons.store_outlined,
-                        label: 'Seller Margin',
-                        value: '${product.sellerMargin.toInt()}%',
+                        icon: Icons.trending_up_rounded,
+                        label: 'Best Buyer',
+                        value: product.bestBuyer != null &&
+                                '${product.bestBuyer}' != '0'
+                            ? '₹${product.bestBuyer}'
+                            : '-',
+                        highlight: product.bestBuyer != null &&
+                            '${product.bestBuyer}' != '0',
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: _InfoTile(    
-                        icon: Icons.shopping_cart_outlined,
-                        label: 'Buyer Margin',
-                        value: '${product.buyerMargin.toInt()}%',
+                      child: _InfoTile(
+                        icon: Icons.trending_down_rounded,
+                        label: 'Best Seller',
+                        value: product.bestSeller != null &&
+                                '${product.bestSeller}' != '0'
+                            ? '₹${product.bestSeller}'
+                            : '-',
                       ),
                     ),
                   ],
@@ -430,7 +496,7 @@ class _CircuitBox extends StatelessWidget {
   final Color textColor;
   final IconData icon;
 
-  const _CircuitBox({   
+  const _CircuitBox({
     required this.label,
     required this.value,
     required this.color,
@@ -440,7 +506,7 @@ class _CircuitBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(  
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: color,
@@ -456,7 +522,10 @@ class _CircuitBox extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(fontSize: 10, color: textColor.withValues(alpha: 0.7)),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: textColor.withValues(alpha: 0.7),
+                  ),
                 ),
                 Text(
                   value,
@@ -510,10 +579,14 @@ class _InfoTile extends StatelessWidget {
           ),
           Text(
             value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: highlight ? const Color(0xFFE65100) : const Color(0xFF333333),
+              color: highlight
+                  ? const Color(0xFFE65100)
+                  : const Color(0xFF333333),
             ),
           ),
         ],

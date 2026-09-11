@@ -45,6 +45,7 @@ class SbtProduct {
   final dynamic video;
   final dynamic path;
   final dynamic bidTime;
+  final dynamic ltp;
 
   SbtProduct({
     required this.productId,
@@ -63,6 +64,7 @@ class SbtProduct {
     this.video,
     required this.path,
     this.bidTime,
+    this.ltp,
   });
 
   factory SbtProduct.fromJson(Map<dynamic, dynamic> json) {
@@ -83,6 +85,7 @@ class SbtProduct {
       video: json['video'] as dynamic,
       path: json['path'] as dynamic,
       bidTime: json['bid_time'] as dynamic,
+      ltp: json['ltp'] as dynamic,
     );
   }
 
@@ -104,6 +107,7 @@ class SbtProduct {
       'video': video,
       'path': path,
       'bid_time': bidTime,
+      'ltp': ltp,
     };
   }
 }

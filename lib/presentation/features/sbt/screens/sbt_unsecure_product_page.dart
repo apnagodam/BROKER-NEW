@@ -1,122 +1,33 @@
+import 'package:ag_broker/core/utils/product_helper.dart';
+import 'package:ag_broker/domain/entities/sbt_product.dart';
 import 'package:ag_broker/l10n/app_localizations.dart';
+import 'package:ag_broker/presentation/providers/bids_provider.dart';
+import 'package:ag_broker/presentation/providers/sbt_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SbtUnsecureProduct {
-  final int srNo;
-  final String commodity;
-  final String factoryName;
-  final String state;
-  final String district;
-  final String location;
-  final String address;
-  final double lowerCircuit;
-  final double upperCircuit;
-  final double quantityLimit;
-  final int deliveryDays;
-  final String expiryDate;
-  final double sellerMargin;
-  final double buyerMargin;
-  final double creditLimit;
-  final double labour;
-  final double dhalta;
-  final String shipToName;
-  final String shipToGST;
-
-  const SbtUnsecureProduct({
-    required this.srNo,
-    required this.commodity,
-    required this.factoryName,
-    required this.state,
-    required this.district,
-    required this.location,
-    required this.address,
-    required this.lowerCircuit,
-    required this.upperCircuit,
-    required this.quantityLimit,
-    required this.deliveryDays,
-    required this.expiryDate,
-    required this.sellerMargin,
-    required this.buyerMargin,
-    required this.creditLimit,
-    required this.labour,
-    required this.dhalta,
-    this.shipToName = '',
-    this.shipToGST = '',
-  });
-}
-
-const List<SbtUnsecureProduct> _sampleProducts = [
-  SbtUnsecureProduct(
-    srNo: 1,
-    commodity: 'Feed Barley',
-    factoryName: 'Khatu Manda - Old barley (Khatu Manda - Old barley)',
-    state: 'Rajasthan',
-    district: 'Jaipur',
-    location: 'Jaipur, (जयपुर,), 332402',
-    address: 'Madini Manda, Tehsil-Dataramgarh (मदिनी मंडा, तहसील - दातारामगढ़)',
-    lowerCircuit: 2100,
-    upperCircuit: 2500,
-    quantityLimit: 1500,
-    deliveryDays: 5,
-    expiryDate: '6-3-2026',
-    sellerMargin: 0,
-    buyerMargin: 0,
-    creditLimit: 0,
-    labour: 0,
-    dhalta: 0,
-    shipToName: '',
-    shipToGST: '',
-  ),
-  SbtUnsecureProduct(
-    srNo: 2,
-    commodity: '0.5% FF - Oil Quality Ground Nut',
-    factoryName: 'Rajasthan Groundnut (राजस्थान मूंगफली)',
-    state: 'Rajasthan',
-    district: 'Jodhpur',
-    location: 'AAU, (Rajasthan), 342311',
-    address: 'R K Warehouse, AAU, Phalodi (R K Warehouse, AAU, Phalodi)',
-    lowerCircuit: 5000,
-    upperCircuit: 8000,
-    quantityLimit: 2000,
-    deliveryDays: 5,
-    expiryDate: '30-4-2026',
-    sellerMargin: 8,
-    buyerMargin: 8,
-    creditLimit: 1,
-    labour: 12,
-    dhalta: 0,
-    shipToName: 'R K Warehouse, AAU',
-    shipToGST: '',
-  ),
-];
-
-class SbtUnsecureProductPage extends StatefulWidget {
+class SbtUnsecureProductPage extends ConsumerStatefulWidget {
   const SbtUnsecureProductPage({super.key});
 
   @override
-  State<SbtUnsecureProductPage> createState() => _SbtUnsecureProductPageState();
+  ConsumerState<SbtUnsecureProductPage> createState() =>
+      _SbtUnsecureProductPageState();
 }
 
-class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
+class _SbtUnsecureProductPageState
+    extends ConsumerState<SbtUnsecureProductPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<SbtUnsecureProduct> _filtered = _sampleProducts;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_onSearch);
-  }
-
-  void _onSearch() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filtered = _sampleProducts.where((p) {
-        return p.commodity.toLowerCase().contains(query) ||
-            p.district.toLowerCase().contains(query) ||
-            p.state.toLowerCase().contains(query) ||
-            p.factoryName.toLowerCase().contains(query);
-      }).toList();
+    _searchController.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final sbtState = ref.read(sbtStateProvider);
+      if (sbtState.sbtProductData == null) {
+        ref.read(sbtStateProvider.notifier).fetchSbtProducts();
+      }
     });
   }
 
@@ -126,20 +37,55 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
     super.dispose();
   }
 
-  void _showQualityParameters(BuildContext context, SbtUnsecureProduct product) {
+  void _showQualityParameters(BuildContext context, SbtProduct product) {
+    if (product.productId != null) {
+      ref
+          .read(bidsStateProvider.notifier)
+          .fetchQualityParams("${product.productId}");
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => _QualityParamsSheet(product: product),
+      builder: (_) => Consumer(
+        builder: (context, ref, child) {
+          final qualityData = ref.watch(bidsStateProvider).qualityParamsData;
+          return _QualityParamsSheet(
+            product: product,
+            qualityParams: qualityData?.data,
+          );
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
+    final sbtState = ref.watch(sbtStateProvider);
+
+    final allProducts = sbtState.sbtProductData?.data ?? [];
+    // Filter for Factory (Unsecure) SBT products: sbt_type == 2 or factory
+    final factoryProducts = allProducts.where((p) {
+      return ProductHelper.isFactoryDelivery(
+        p.sbtType,
+        p.district?.toString(),
+      );
+    }).toList();
+
+    final query = _searchController.text.trim().toLowerCase();
+    final filtered = query.isEmpty
+        ? factoryProducts
+        : factoryProducts.where((p) {
+            final commodity = (p.commodity ?? '').toString().toLowerCase();
+            final district = (p.district ?? '').toString().toLowerCase();
+            return commodity.contains(query) || district.contains(query);
+          }).toList();
+
+    const Color primaryColor = Color(0xFFF25822); // Factory Orange
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
@@ -159,34 +105,13 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF7B3F00),
+        backgroundColor: const Color(0xFF1A6B3C),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Column(
         children: [
           // Breadcrumb
-          Container(
-            width: double.infinity,
-            color: const Color(0xFF7B3F00).withValues(alpha: 0.08),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: const [
-                Icon(Icons.home_outlined, size: 14, color: Color(0xFF7B3F00)),
-                SizedBox(width: 4),
-                Text('Home', style: TextStyle(fontSize: 12, color: Color(0xFF7B3F00))),
-                Text(' / ', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                Text(
-                  'SBT Unsecure Products',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF7B3F00),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
 
           // Search bar
           Padding(
@@ -194,9 +119,9 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search commodity, district, state...',
+                hintText: 'Search by commodity or factory...',
                 hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF7B3F00)),
+                prefixIcon: const Icon(Icons.search, color: primaryColor),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, size: 18),
@@ -216,41 +141,117 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF7B3F00), width: 1.5),
+                  borderSide: const BorderSide(color: primaryColor, width: 1.5),
                 ),
               ),
             ),
           ),
 
-          // Count label
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Showing ${_filtered.length} of ${_sampleProducts.length} entries',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ),
-          ),
 
-          // Cards list
           Expanded(
-            child: _filtered.isEmpty
-                ? const Center(
-                    child: Text('No products found.', style: TextStyle(color: Colors.grey)),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                    itemCount: _filtered.length,
-                    itemBuilder: (context, index) {
-                      final p = _filtered[index];
-                      return _ProductCard(
-                        product: p,
-                        onViewQuality: () => _showQualityParameters(context, p),
-                      );
-                    },
-                  ),
+            child: RefreshIndicator(
+              color: primaryColor,
+              onRefresh: () async {
+                await ref
+                    .read(sbtStateProvider.notifier)
+                    .fetchSbtProducts();
+              },
+              child: sbtState.isLoading && factoryProducts.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(color: primaryColor),
+                    )
+                  : sbtState.error != null && factoryProducts.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline_rounded,
+                                  size: 48,
+                                  color: Colors.red.shade400,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  sbtState.error!,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  onPressed: () => ref
+                                      .read(sbtStateProvider.notifier)
+                                      .fetchSbtProducts(),
+                                  icon: const Icon(Icons.refresh),
+                                  label: Text(
+                                    localizations?.retry ?? 'Retry',
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: primaryColor,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : filtered.isEmpty
+                          ? ListView(
+                              physics:
+                                  const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.factory_outlined,
+                                          size: 56,
+                                          color: Colors.grey.shade400,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          factoryProducts.isEmpty
+                                              ? (localizations
+                                                      ?.noDataAvailable ??
+                                                  'No factory SBT products available.')
+                                              : 'No matching products found.',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ListView.builder(
+                              physics:
+                                  const AlwaysScrollableScrollPhysics(),
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final p = filtered[index];
+                                return _ProductCard(
+                                  product: p,
+                                  index: index + 1,
+                                  onViewQuality: () =>
+                                      _showQualityParameters(context, p),
+                                );
+                              },
+                            ),
+            ),
           ),
         ],
       ),
@@ -259,13 +260,34 @@ class _SbtUnsecureProductPageState extends State<SbtUnsecureProductPage> {
 }
 
 class _ProductCard extends StatelessWidget {
-  final SbtUnsecureProduct product;
+  final SbtProduct product;
+  final int index;
   final VoidCallback onViewQuality;
 
-  const _ProductCard({required this.product, required this.onViewQuality});
+  const _ProductCard({
+    required this.product,
+    required this.index,
+    required this.onViewQuality,
+  });
 
   @override
   Widget build(BuildContext context) {
+    const Color primaryColor = Color(0xFFF25822);
+    final cleanCommodity = ProductHelper.cleanCommodityName(
+      product.commodity?.toString(),
+      product.district?.toString(),
+    );
+    final cleanLocation = ProductHelper.extractLocation(
+      product.district?.toString(),
+    );
+    final deliveryDays = ProductHelper.extractDeliveryDays(
+      product.district?.toString(),
+    );
+    final scheduleTime = ProductHelper.formatBidTime(
+      product.date,
+      product.bidTime,
+    );
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
@@ -286,20 +308,22 @@ class _ProductCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: const BoxDecoration(
-              color: Color(0xFF7B3F00),
+              color: primaryColor,
               borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
             ),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    '#${product.srNo}',
+                    '#$index',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -310,7 +334,9 @@ class _ProductCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    product.commodity,
+                    cleanCommodity.isNotEmpty
+                        ? cleanCommodity
+                        : (product.commodity?.toString() ?? '-'),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -318,30 +344,38 @@ class _ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: onViewQuality,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.visibility_outlined, size: 14, color: Color(0xFF7B3F00)),
-                        SizedBox(width: 4),
-                        Text(
-                          'Quality',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF7B3F00),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: onViewQuality,
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(
+                //       horizontal: 10,
+                //       vertical: 5,
+                //     ),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: const [
+                //         Icon(
+                //           Icons.visibility_outlined,
+                //           size: 14,
+                //           color: primaryColor,
+                //         ),
+                //         SizedBox(width: 4),
+                //         Text(
+                //           'Quality',
+                //           style: TextStyle(
+                //             fontSize: 11,
+                //             color: primaryColor,
+                //             fontWeight: FontWeight.w600,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -352,35 +386,30 @@ class _ProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Factory & Location row
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _LabelValue(
-                        icon: Icons.factory_outlined,
-                        label: 'Factory',
-                        value: product.factoryName,
+                if (cleanLocation.isNotEmpty) ...[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.factory_outlined,
+                        size: 16,
+                        color: primaryColor,
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _LabelValue(
-                        icon: Icons.location_city_outlined,
-                        label: 'State / District',
-                        value: '${product.state} / ${product.district}',
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          cleanLocation,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // Address
-                _LabelValue(
-                  icon: Icons.place_outlined,
-                  label: 'Address',
-                  value: product.address,
-                ),
-                const SizedBox(height: 10),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
 
                 // Circuit prices
                 Row(
@@ -388,7 +417,7 @@ class _ProductCard extends StatelessWidget {
                     Expanded(
                       child: _CircuitBox(
                         label: 'Lower Circuit',
-                        value: '₹${product.lowerCircuit.toInt()}/QTL',
+                        value: '₹${product.lowerCircuit ?? '-'}/QTL',
                         color: const Color(0xFFE8F5E9),
                         textColor: const Color(0xFF2E7D32),
                         icon: Icons.arrow_downward,
@@ -398,7 +427,7 @@ class _ProductCard extends StatelessWidget {
                     Expanded(
                       child: _CircuitBox(
                         label: 'Upper Circuit',
-                        value: '₹${product.upperCircuit.toInt()}/QTL',
+                        value: '₹${product.upperCircuit ?? '-'}/QTL',
                         color: const Color(0xFFFFF3E0),
                         textColor: const Color(0xFFE65100),
                         icon: Icons.arrow_upward,
@@ -408,14 +437,58 @@ class _ProductCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
-                // Info grid row 1
+                // Full-width Bid Time Banner
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F9FA),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.access_time_rounded,
+                        size: 15,
+                        color: primaryColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Bid Time: ',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          scheduleTime,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF333333),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Details grid: Row 1 (Qty Limit, Delivery, LTP)
                 Row(
                   children: [
                     Expanded(
                       child: _InfoTile(
                         icon: Icons.inventory_2_outlined,
                         label: 'Qty Limit',
-                        value: '${product.quantityLimit.toInt()} QTL',
+                        value: '${product.quantityLimit ?? '-'} QTL',
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -423,81 +496,49 @@ class _ProductCard extends StatelessWidget {
                       child: _InfoTile(
                         icon: Icons.local_shipping_outlined,
                         label: 'Delivery',
-                        value: '${product.deliveryDays} Days',
+                        value: deliveryDays,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _InfoTile(
-                        icon: Icons.calendar_today_outlined,
-                        label: 'Expiry',
-                        value: product.expiryDate,
+                        icon: Icons.price_check_outlined,
+                        label: 'LTP',
+                        value: product.ltp != null
+                            ? '₹${product.ltp}'
+                            : '-',
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
 
-                // Info grid row 2
+                // Details grid: Row 2 (Best Buyer, Best Seller)
                 Row(
                   children: [
                     Expanded(
                       child: _InfoTile(
-                        icon: Icons.store_outlined,
-                        label: 'Seller Margin',
-                        value: '${product.sellerMargin.toInt()}%',
+                        icon: Icons.trending_up_rounded,
+                        label: 'Best Buyer',
+                        value: product.bestBuyer != null &&
+                                '${product.bestBuyer}' != '0'
+                            ? '₹${product.bestBuyer}'
+                            : '-',
+                        highlight: product.bestBuyer != null &&
+                            '${product.bestBuyer}' != '0',
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _InfoTile(
-                        icon: Icons.shopping_cart_outlined,
-                        label: 'Buyer Margin',
-                        value: '${product.buyerMargin.toInt()}%',
+                        icon: Icons.trending_down_rounded,
+                        label: 'Best Seller',
+                        value: product.bestSeller != null &&
+                                '${product.bestSeller}' != '0'
+                            ? '₹${product.bestSeller}'
+                            : '-',
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _InfoTile(
-                        icon: Icons.credit_card_outlined,
-                        label: 'Credit Limit',
-                        value: '₹${product.creditLimit.toInt()}',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // Info grid row 3
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoTile(
-                        icon: Icons.engineering_outlined,
-                        label: 'Labour (₹)',
-                        value: '₹${product.labour.toInt()}',
-                        highlight: product.labour > 0,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _InfoTile(
-                        icon: Icons.percent_outlined,
-                        label: 'Dhalta (%)',
-                        value: '${product.dhalta.toInt()}%',
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (product.shipToName.isNotEmpty)
-                      Expanded(
-                        child: _InfoTile(
-                          icon: Icons.warehouse_outlined,
-                          label: 'Ship To',
-                          value: product.shipToName,
-                        ),
-                      )
-                    else
-                      const Expanded(child: SizedBox()),
                   ],
                 ),
               ],
@@ -509,13 +550,136 @@ class _ProductCard extends StatelessWidget {
   }
 }
 
-class _QualityParamsSheet extends StatelessWidget {
-  final SbtUnsecureProduct product;
+class _CircuitBox extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final Color textColor;
+  final IconData icon;
 
-  const _QualityParamsSheet({required this.product});
+  const _CircuitBox({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.textColor,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: textColor),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: textColor.withValues(alpha: 0.7),
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool highlight;
+
+  const _InfoTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.highlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const Color primaryColor = Color(0xFFF25822);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: highlight ? const Color(0xFFFFF8E1) : const Color(0xFFF8F9FA),
+        borderRadius: BorderRadius.circular(8),
+        border: highlight
+            ? Border.all(color: const Color(0xFFFFCC02), width: 1)
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 13, color: primaryColor),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 9, color: Colors.grey),
+          ),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: highlight
+                  ? const Color(0xFFE65100)
+                  : const Color(0xFF333333),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QualityParamsSheet extends StatelessWidget {
+  final SbtProduct product;
+  final List<dynamic>? qualityParams;
+
+  const _QualityParamsSheet({
+    required this.product,
+    this.qualityParams,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const Color primaryColor = Color(0xFFF25822);
+    final cleanCommodity = ProductHelper.cleanCommodityName(
+      product.commodity?.toString(),
+      product.district?.toString(),
+    );
+    final cleanLocation = ProductHelper.extractLocation(
+      product.district?.toString(),
+    );
+    final deliveryDays = ProductHelper.extractDeliveryDays(
+      product.district?.toString(),
+    );
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       child: Column(
@@ -533,17 +697,19 @@ class _QualityParamsSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            'Quality Parameters',
+          const Text(
+            'Quality & Specifications',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF7B3F00),
+              color: primaryColor,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            product.commodity,
+            cleanCommodity.isNotEmpty
+                ? cleanCommodity
+                : (product.commodity?.toString() ?? ''),
             style: const TextStyle(fontSize: 13, color: Colors.grey),
           ),
           const SizedBox(height: 16),
@@ -552,17 +718,47 @@ class _QualityParamsSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFFFF8F3),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF7B3F00).withValues(alpha: 0.15)),
+              border: Border.all(color: primaryColor.withValues(alpha: 0.15)),
             ),
             child: Column(
               children: [
-                _QualityRow(label: 'Location', value: product.location),
+                _QualityRow(label: 'Commodity', value: cleanCommodity),
                 const Divider(height: 16),
-                _QualityRow(label: 'Full Address', value: product.address),
+                _QualityRow(
+                  label: 'Factory / Location',
+                  value: cleanLocation.isNotEmpty ? cleanLocation : '-',
+                ),
                 const Divider(height: 16),
-                _QualityRow(label: 'Commodity', value: product.commodity),
+                _QualityRow(
+                  label: 'Circuits',
+                  value:
+                      '₹${product.lowerCircuit ?? '-'} - ₹${product.upperCircuit ?? '-'}',
+                ),
                 const Divider(height: 16),
-                _QualityRow(label: 'Factory Name', value: product.factoryName),
+                _QualityRow(
+                  label: 'Quantity Limit',
+                  value: '${product.quantityLimit ?? '-'} QTL',
+                ),
+                const Divider(height: 16),
+                _QualityRow(
+                  label: 'Delivery Terms',
+                  value: deliveryDays,
+                ),
+                if (qualityParams != null && qualityParams!.isNotEmpty) ...[
+                  const Divider(height: 16),
+                  ...qualityParams!.map((param) {
+                    final pName = param['parameter_name'] ?? param['name'] ?? '';
+                    final pVal = param['value'] ?? param['parameter_value'] ?? '';
+                    if (pName.toString().isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: _QualityRow(
+                        label: pName.toString(),
+                        value: pVal.toString(),
+                      ),
+                    );
+                  }),
+                ],
               ],
             ),
           ),
@@ -572,10 +768,12 @@ class _QualityParamsSheet extends StatelessWidget {
             child: TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF7B3F00),
+                backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: const Text('Close'),
             ),
@@ -598,138 +796,27 @@ class _QualityRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 110,
+          width: 130,
           child: Text(
             label,
-            style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF333333), fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _LabelValue extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _LabelValue({required this.icon, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 14, color: const Color(0xFF7B3F00)),
-        const SizedBox(width: 5),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-              Text( 
-                value,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF333333)),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _CircuitBox extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-  final Color textColor;
-  final IconData icon;
-
-  const _CircuitBox({
-    required this.label,
-    required this.value,
-    required this.color,
-    required this.textColor,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container( 
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 14, color: textColor),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: TextStyle(fontSize: 10, color: textColor.withValues(alpha: 0.7))),
-                Text(
-                  value,
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: textColor),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final bool highlight;
-
-
-  const _InfoTile({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.highlight = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(  
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration( 
-        color: highlight ? const Color(0xFFFFF8E1) : const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-        border: highlight ? Border.all(color: const Color(0xFFFFCC02), width: 1) : null,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 13, color: const Color(0xFF7B3F00)),
-          const SizedBox(height: 3),
-          Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey)),
-          Text( 
-            value, 
-            style: TextStyle(  
-              fontSize: 11,
+            style: const TextStyle(
+              fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: highlight ? const Color(0xFFE65100) : const Color(0xFF333333),
+              color: Colors.black87,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

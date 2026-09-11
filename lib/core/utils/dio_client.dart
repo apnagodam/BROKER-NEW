@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 
 class DioClient {
   static const String baseUrl =
-      Constants.testApiBaseUrl; // Replace with your actual API base URL
+      Constants.apiBaseUrl; // Replace with your actual API base URL
 
   late Dio _dio;
   final Locale _locale;

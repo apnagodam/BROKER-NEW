@@ -2504,7 +2504,7 @@ class _HomePageState extends ConsumerState<HomePage>
     if (video == null || video.toString().isEmpty) return;
 
     final videoUrl = path != null && path.isNotEmpty
-        ? '${Constants.testApiBaseUrl}$path${video.toString()}'
+        ? '${Constants.apiBaseUrl}$path${video.toString()}'
         : video.toString();
 
     Navigator.of(context).push(
